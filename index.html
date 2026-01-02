@@ -14,17 +14,31 @@
       color: #ffffff;
       font-family: Arial, Helvetica, sans-serif;
     }
+
     body {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
     }
+
+    /* LOGO – SOL ÜST */
+    .logo {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 220px;
+    }
+
+    /* SAAT */
     #clock {
       font-size: 110px;
       font-weight: bold;
       letter-spacing: 4px;
     }
+
+    /* TARİH */
     #date {
       margin-top: 20px;
       font-size: 42px;
@@ -34,6 +48,11 @@
 </head>
 
 <body>
+
+  <!-- LOGO -->
+  <img src="logo.png" alt="Porto Bello Hotel" class="logo">
+
+  <!-- SAAT & TARİH -->
   <div id="clock">--:--:--</div>
   <div id="date">--</div>
 
@@ -41,11 +60,9 @@
     function update() {
       const now = new Date();
 
-      // Time (24-hour, English)
       document.getElementById("clock").textContent =
         now.toLocaleTimeString("en-GB", { hour12: false });
 
-      // Date (English)
       document.getElementById("date").textContent =
         now.toLocaleDateString("en-GB", {
           weekday: "long",
@@ -58,5 +75,6 @@
     update();
     setInterval(update, 1000);
   </script>
+
 </body>
 </html>
