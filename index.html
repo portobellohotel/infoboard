@@ -23,7 +23,7 @@
       justify-content: center;
     }
 
-    /* LOGO – sol üst */
+    /* LOGO */
     .logo {
       position: absolute;
       top: 30px;
@@ -52,7 +52,7 @@
       font-weight: 300;
     }
 
-    /* ALT BANT – en altta sabit */
+    /* ALT BANT */
     #ticker {
       position: absolute;
       left: 0;
@@ -61,46 +61,4 @@
       padding: 18px 30px;
       text-align: center;
       font-size: 28px;
-      letter-spacing: 0.5px;
-      background: rgba(0,0,0,0.18);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      color: rgba(255,255,255,0.92);
-    }
-  </style>
-</head>
-
-<body>
-
-  <img src="logo.png" alt="Porto Bello Hotel" class="logo">
-
-  <div id="clock">--:--:--</div>
-  <div id="date">--</div>
-
-  <!-- ALT BANT MESAJ -->
-  <div id="ticker">🍳 Breakfast 07:00–10:00 | 🍽️ Lunch 12:30–14:30 | 🍷 Dinner 19:00–21:30 | 🎉 Animation Show 21:00
-</div>
-
-  <script>
-    function update() {
-      const now = new Date();
-
-      document.getElementById("clock").textContent =
-        now.toLocaleTimeString("en-GB", { hour12: false });
-
-      document.getElementById("date").textContent =
-        now.toLocaleDateString("en-GB", {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric"
-        });
-    }
-
-    update();
-    setInterval(update, 1000);
-  </script>
-
-</body>
-</html>
+      background: rgba(
