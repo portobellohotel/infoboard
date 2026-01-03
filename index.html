@@ -28,31 +28,48 @@
     }
 
     /* ================================
-       WEATHER (TOP RIGHT) — 2x SCALE
+       WEATHER (TOP RIGHT) — PREMIUM SHADOW (NO BOX LOOK)
        (SADECE BURASI DEĞİŞTİ)
        ================================= */
     .weather {
-      /* 2x büyütme kontrolü */
+      /* ölçek kontrolü (bunu değiştirince her şey birlikte büyür/küçülür) */
       --w-scale: 1.5;
 
       position: absolute; top: 1px; right: 1px;
-      padding: calc(12px * var(--w-scale)) calc(14px * var(--w-scale));
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: calc(14px * var(--w-scale));
-      text-align: right;
+      padding: calc(10px * var(--w-scale)) calc(12px * var(--w-scale));
 
-      /* LOGO ile çakışmayı önlemek için: genişliği sabitleme yerine akıllı sınır */
+      /* KUTU HİSSİNİ SİL: çok hafif arka plan + blur minimum */
+      background: rgba(0,0,0,.06);
+      backdrop-filter: blur(2px);
+
+      /* Border yok gibi (premium hissi için çok hafif) */
+      border: 1px solid rgba(255,255,255,.04);
+
+      /* Çok küçük radius, kutu gibi görünmesin */
+      border-radius: calc(10px * var(--w-scale));
+
+      text-align: right;
       width: fit-content;
       max-width: min(560px, 46vw);
       box-sizing: border-box;
       z-index: 5;
+
+      /* panel gölgesi çok hafif */
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.18),
+        0 0 0 1px rgba(255,255,255,.02) inset;
+    }
+
+    /* Weather yazılarına premium gölge */
+    .weather, .weather *{
+      text-shadow:
+        0 2px 10px rgba(0,0,0,.55),
+        0 0 18px rgba(0,0,0,.35);
     }
 
     .weather .loc {
       font-size: calc(15px * var(--w-scale));
-      opacity: .92;
+      opacity: .95;
       letter-spacing:.2px;
       white-space: nowrap;
     }
@@ -69,13 +86,15 @@
     .weather .icon{
       font-size: calc(26px * var(--w-scale));
       line-height: 1;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,.06));
+      filter:
+        drop-shadow(0 2px 10px rgba(0,0,0,.55))
+        drop-shadow(0 0 14px rgba(255,255,255,.08));
       flex: 0 0 auto;
     }
 
     .weather .cond{
       font-size: calc(14px * var(--w-scale));
-      opacity: .88;
+      opacity: .92;
       letter-spacing: .2px;
       white-space: nowrap;
       flex: 0 1 auto;
@@ -91,25 +110,25 @@
     .weather .sub  {
       margin-top: calc(2px * var(--w-scale));
       font-size: calc(14px * var(--w-scale));
-      opacity: .86;
+      opacity: .90;
       white-space: nowrap;
     }
 
     .weather .sub2 {
       margin-top: calc(2px * var(--w-scale));
       font-size: calc(14px * var(--w-scale));
-      opacity: .86;
+      opacity: .90;
       white-space: nowrap;
     }
 
     .weather .muted{
       font-size: calc(12px * var(--w-scale));
-      opacity: .55;
+      opacity: .70;
       margin-top: calc(6px * var(--w-scale));
       white-space: nowrap;
     }
 
-    /* Çok dar ekranlarda (küçük telefon vb.) taşmayı engelle: ölçeği hafif düşür */
+    /* küçük ekranlar */
     @media (max-width: 600px){
       .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
     }
