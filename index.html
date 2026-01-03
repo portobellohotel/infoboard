@@ -27,44 +27,93 @@
       user-select: none; pointer-events: none;
     }
 
-    /* WEATHER (TOP RIGHT) */
+    /* ================================
+       WEATHER (TOP RIGHT) — 2x SCALE
+       (SADECE BURASI DEĞİŞTİ)
+       ================================= */
     .weather {
-      position: absolute; top: 26px; right: 1px;
-      padding: 12px 14px;
+      /* 2x büyütme kontrolü */
+      --w-scale: 2;
+
+      position: absolute; top: 26px; right: 26px;
+      padding: calc(12px * var(--w-scale)) calc(14px * var(--w-scale));
       background: rgba(0,0,0,.18);
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
+      border-radius: calc(14px * var(--w-scale));
       text-align: right;
-      min-width: 300px;
 
-      /* ✅ ONLY CHANGE: make weather 2x bigger */
-      transform: scale(2);
-      transform-origin: top right;
+      /* LOGO ile çakışmayı önlemek için: genişliği sabitleme yerine akıllı sınır */
+      width: fit-content;
+      max-width: min(560px, 46vw);
+      box-sizing: border-box;
+      z-index: 5;
     }
-    .weather .loc { font-size: 15px; opacity: .92; letter-spacing:.2px; }
+
+    .weather .loc {
+      font-size: calc(15px * var(--w-scale));
+      opacity: .92;
+      letter-spacing:.2px;
+      white-space: nowrap;
+    }
+
     .weather .topline{
-      margin-top: 6px;
+      margin-top: calc(6px * var(--w-scale));
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 10px;
+      gap: calc(10px * var(--w-scale));
+      flex-wrap: nowrap;
     }
+
     .weather .icon{
-      font-size: 26px;
+      font-size: calc(26px * var(--w-scale));
       line-height: 1;
       filter: drop-shadow(0 0 10px rgba(255,255,255,.06));
+      flex: 0 0 auto;
     }
+
     .weather .cond{
-      font-size: 14px;
+      font-size: calc(14px * var(--w-scale));
       opacity: .88;
       letter-spacing: .2px;
       white-space: nowrap;
+      flex: 0 1 auto;
     }
-    .weather .main { margin-top: 4px; font-size: 22px; font-weight: 800; }
-    .weather .sub  { margin-top: 2px; font-size: 14px; opacity: .86; }
-    .weather .sub2 { margin-top: 2px; font-size: 14px; opacity: .86; }
-    .weather .muted{ font-size: 12px; opacity: .55; margin-top: 6px; }
+
+    .weather .main {
+      margin-top: calc(4px * var(--w-scale));
+      font-size: calc(22px * var(--w-scale));
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .weather .sub  {
+      margin-top: calc(2px * var(--w-scale));
+      font-size: calc(14px * var(--w-scale));
+      opacity: .86;
+      white-space: nowrap;
+    }
+
+    .weather .sub2 {
+      margin-top: calc(2px * var(--w-scale));
+      font-size: calc(14px * var(--w-scale));
+      opacity: .86;
+      white-space: nowrap;
+    }
+
+    .weather .muted{
+      font-size: calc(12px * var(--w-scale));
+      opacity: .55;
+      margin-top: calc(6px * var(--w-scale));
+      white-space: nowrap;
+    }
+
+    /* Çok dar ekranlarda (küçük telefon vb.) taşmayı engelle: ölçeği hafif düşür */
+    @media (max-width: 600px){
+      .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
+    }
+    /* ================================ */
 
     /* CLOCK + DATE */
     #clock {
