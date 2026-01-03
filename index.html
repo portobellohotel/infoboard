@@ -1,181 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Porto Bello Hotel | Time & Date</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>Porto Bello Hotel | Time & Date</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<style>
-  html, body{
-    margin:0; width:100%; height:100%;
-    background:#0b1320; color:#fff;
-    font-family: Arial, Helvetica, sans-serif;
-  }
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #0b1320;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
 
-  body{
-    position:relative;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-  }
+    body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-  /* LOGO */
-  .logo{
-    position:absolute;
-    top:30px; left:30px;
-    width:190px;
-    opacity:.85;
-  }
+    /* LOGO */
+    .logo {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 190px;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.08));
+      user-select: none;
+      pointer-events: none;
+    }
 
-  /* CLOCK */
-  #clock{
-    font-size:110px;
-    font-weight:700;
-    letter-spacing:4px;
-    text-shadow: 0 0 14px rgba(255,255,255,.18);
-  }
+    /* CLOCK */
+    #clock {
+      font-size: 110px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-shadow:
+        0 0 12px rgba(255,255,255,0.15),
+        0 0 24px rgba(255,255,255,0.08);
+    }
 
-  /* DATE */
-  #date{
-    margin-top:20px;
-    font-size:42px;
-    opacity:.85;
-  }
+    /* DATE */
+    #date {
+      margin-top: 20px;
+      font-size: 42px;
+      opacity: 0.85;
+      letter-spacing: 1px;
+      font-weight: 300;
+    }
 
-  /* TICKERS */
-  .ticker{
-    position:absolute;
-    left:0; right:0;
-    padding:14px 30px;
-    font-size:26px;
-    text-align:center;
-    background:rgba(0,0,0,.18);
-    backdrop-filter: blur(6px);
-    border-top:1px solid rgba(255,255,255,.08);
-  }
-  #ticker1{ bottom:58px; }
-  #ticker2{ bottom:0; }
+    /* TWO TICKERS */
+    .tickerWrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.18);
+      backdrop-filter: blur(6px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
 
-  .item{ transition: all .25s ease; }
+    .tickerRow {
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 14px 22px;
+    }
 
-  /* ACTIVE (blink) */
-  @keyframes pulse{
-    0%{opacity:1}
-    50%{opacity:.45}
-    100%{opacity:1}
-  }
-  .active{
-    animation:pulse 1.2s infinite;
-    color:#ffd166;
-    text-shadow:0 0 10px rgba(255,209,102,.45);
-    font-weight:600;
-  }
+    /* separator line between two rows */
+    .tickerRow.top {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
 
-  /* PAST */
-  .past{ opacity:.35 }
+    /* MOVING TRACK */
+    .track {
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      will-change: transform;
+      animation: marquee linear infinite;
+    }
 
-  /* BADGE */
-  .badge{
-    margin-left:10px;
-    padding:4px 10px;
-    border-radius:999px;
-    font-size:14px;
-    font-weight:800;
-    letter-spacing:.4px;
-    background:rgba(255,209,102,.15);
-    border:1px solid rgba(255,209,102,.4);
-  }
-</style>
+    /* Slow premium speeds */
+    .top .track { animation-duration: 70s; }
+    .bottom .track { animation-duration: 80s; }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ITEMS */
+    .item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      line-height: 1;
+      padding: 6px 8px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.92);
+      transition: opacity .25s ease, color .25s ease;
+    }
+
+    .sep {
+      opacity: 0.35;
+      margin: 0 4px;
+      user-select: none;
+    }
+
+    /* Past = slightly dim */
+    .past {
+      opacity: 0.35;
+    }
+
+    /* Active – blink + highlight */
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.45; }
+      100% { opacity: 1; }
+    }
+
+    .active {
+      animation: pulse 1.2s ease-in-out infinite;
+      color: #ffd166;
+      font-weight: 700;
+    }
+
+    /* BADGE */
+    .badge {
+      display: none;
+      font-size: 16px;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 209, 102, 0.35);
+      background: rgba(255, 209, 102, 0.12);
+      color: #ffd166;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .active .badge {
+      display: inline-block;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 768px) {
+      #clock { font-size: 72px; }
+      #date  { font-size: 28px; }
+      .logo  { width: 150px; top: 18px; left: 18px; }
+      .item  { font-size: 20px; }
+      .badge { font-size: 12px; padding: 5px 10px; }
+      .tickerRow { padding: 12px 14px; }
+    }
+  </style>
 </head>
 
 <body>
-
   <img src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
   <div id="clock"></div>
   <div id="date"></div>
 
-  <div id="ticker1" class="ticker">
-    <span id="breakfast" class="item">🍳 Breakfast 07:00–10:00</span> |
-    <span id="lateBreakfast" class="item">🥐 Late Breakfast 10:00–10:30</span> |
-    <span id="lunch" class="item">🍽️ Lunch 12:30–14:00</span> |
-    <span id="snack" class="item">🍪 Snack 14:30–15:30</span>
+  <!-- TWO-LINE TICKER -->
+  <div class="tickerWrap">
+    <div class="tickerRow top">
+      <div class="track" id="trackTop"></div>
+    </div>
+    <div class="tickerRow bottom">
+      <div class="track" id="trackBottom"></div>
+    </div>
   </div>
 
-  <div id="ticker2" class="ticker">
-    <span id="dinner" class="item">🍷 Dinner 18:30–21:00</span> |
-    <span id="show" class="item">🎉 Animation Show 21:30</span> |
-    <span id="lateSnack" class="item">🌙 Late Snack 23:00–06:00</span> |
-    <span id="bar" class="item">🍸 Lobby Bar 08:30–00:00</span>
-  </div>
+  <script>
+    // ====== CONFIG ======
+    // NOTE:
+    // - meals: show "NOW OPEN" when active
+    // - animation: show "LIVE NOW" when active
+    // - allowPastDim: if false, never becomes "past" dim (Late Snack requested)
+    // - times in 24h "HH:MM"
+    // - if end is "00:00" it means 24:00 (end of day)
+    // - overnight ranges supported (e.g., 23:00–06:00)
 
-<script>
-  const clock = document.getElementById("clock");
-  const dateEl = document.getElementById("date");
-
-  const hm = (h,m) => h*60 + m;
-
-  function addBadge(el, text){
-    el.insertAdjacentHTML("beforeend", `<span class="badge">${text}</span>`);
-  }
-
-  function clearAll(){
-    document.querySelectorAll(".item").forEach(el=>{
-      el.classList.remove("active","past");
-      el.querySelector(".badge")?.remove();
-    });
-  }
-
-  function updateUI(){
-    const now = new Date();
-    const cur = hm(now.getHours(), now.getMinutes());
-
-    clock.textContent = now.toLocaleTimeString("en-GB", {hour12:false});
-    dateEl.textContent = now.toLocaleDateString("en-GB", {
-      weekday:"long", day:"numeric", month:"long", year:"numeric"
-    });
-
-    clearAll();
-
-    // Normal kurallar (Late Snack yok burada!)
-    const items = [
-      ["breakfast",     hm(7,0),   hm(10,0),  "NOW OPEN"],
-      ["lateBreakfast", hm(10,0),  hm(10,30), "NOW OPEN"],
-      ["lunch",         hm(12,30), hm(14,0),  "NOW OPEN"],
-      ["snack",         hm(14,30), hm(15,30), "NOW OPEN"],
-      ["dinner",        hm(18,30), hm(21,0),  "NOW OPEN"],
-      ["show",          hm(21,30), hm(21,50), "LIVE NOW"],
-      ["bar",           hm(8,30),  hm(24,0),  "NOW OPEN"],
+    const topBand = [
+      { key:"breakfast",      icon:"🍳", label:"Breakfast",      start:"07:00", end:"10:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      { key:"lateBreakfast",  icon:"🥐", label:"Late Breakfast", start:"10:00", end:"10:30", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      { key:"lunch",          icon:"🍽️", label:"Lunch",          start:"12:30", end:"14:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      { key:"snack",          icon:"🍪", label:"Snack",          start:"14:30", end:"15:30", badge:"NOW OPEN", type:"meal", allowPastDim:true },
     ];
 
-    items.forEach(([id, start, end, label])=>{
-      const el = document.getElementById(id);
+    const bottomBand = [
+      { key:"dinner",     icon:"🍷", label:"Dinner",         start:"18:30", end:"21:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      // Animation show has only a start in your list. We'll treat it as 60 minutes (21:30–22:30).
+      { key:"show",       icon:"🎉", label:"Animation Show", start:"21:30", end:"22:30", badge:"LIVE NOW", type:"show", allowPastDim:true },
+      // Late Snack: NEVER dim, but when active it should blink + show NOW OPEN
+      { key:"lateSnack",  icon:"🌙", label:"Late Snack",     start:"23:00", end:"06:00", badge:"NOW OPEN", type:"meal", allowPastDim:false },
+      { key:"lobbyBar",   icon:"🍸", label:"Lobby Bar",      start:"08:30", end:"00:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+    ];
 
-      if(cur >= start && cur <= end){
-        el.classList.add("active");
-        addBadge(el, label);
-      } else if(cur > end){
-        el.classList.add("past");
-      }
-    });
-
-    // ✅ Late Snack özel kural:
-    // - ASLA past olmayacak (silik olmayacak)
-    // - Normalde beyaz kalacak (hiç class verme)
-    // - 23:00–06:00 arası active + NOW OPEN
-    const late = document.getElementById("lateSnack");
-    const inLateSnack = (cur >= hm(23,0) || cur <= hm(6,0));
-
-    if(inLateSnack){
-      late.classList.add("active");
-      addBadge(late, "NOW OPEN");
+    // ====== HELPERS ======
+    function toMin(hhmm) {
+      const [h,m] = hhmm.split(":").map(Number);
+      return (h * 60) + m;
     }
-  }
 
-  updateUI();
-  setInterval(updateUI, 1000);
-</script>
+    function isActive(nowMin, startMin, endMin) {
+      // end 00:00 => 24:00
+      if (endMin === 0) endMin = 1440;
 
+      // overnight
+      if (endMin < startMin) {
+        return (nowMin >= startMin) || (nowMin < endMin);
+      }
+      // normal
+      return (nowMin >= startMin) && (nowMin < endMin);
+    }
+
+    function isPast(nowMin, startMin, endMin) {
+      // end 00:00 => 24:00
+      if (endMin === 0) endMin = 1440;
+
+      // overnight: "past" is tricky; for our UI we only dim if we're in the "gap" between end and start
+      // Example 23:00–06:00 => past during 06:00–22:59 (gap)
+      if (endMin < startMin) {
+        return (nowMin >= endMin) && (nowMin < startMin);
+      }
+      // normal: past if now >= end
+      return nowMin >= endMin;
+    }
+
+    // ====== RENDER (MARQUEE SAFE) ======
+    function renderBand(trackEl, items) {
+      // Build one sequence with separators
+      const seq = document.createElement("div");
+      seq.style.display = "inline-flex";
+      seq.style.alignItems = "center";
+
+      items.forEach((it, idx) => {
+        const span = document.createElement("span");
+        span.className = "item";
+        span.dataset.key = it.key;
+
+        // text: icon Label HH:MM–HH:MM (or single time handled by range in config)
+        const timeText = `${it.start}–${it.end === "00:00" ? "00:00" : it.end}`;
+        span.innerHTML = `
+          <span class="txt">${it.icon} ${it.label} ${timeText}</span>
+          <span class="badge">${it.badge}</span>
+        `;
+
+        seq.appendChild(span);
+
+        // separator
+        if (idx !== items.length - 1) {
+          const sep = document.createElement("span");
+          sep.className = "sep";
+          sep.textContent = "|";
+          seq.appendChild(sep);
+        }
+      });
+
+      // Duplicate sequence to make seamless loop (50% travel)
+      const seq2 = seq.cloneNode(true);
+
+      trackEl.innerHTML = "";
+      trackEl.appendChild(seq);
+      trackEl.appendChild(seq2);
+
+      // Ensure the track width is enough; if it's short, it still loops fine
+      trackEl.style.width = "max-content";
+    }
+
+    // ====== STATE UPDATE ======
+    function clearStates() {
+      document.querySelectorAll(".item").forEach(el => {
+        el.classList.remove("active", "past");
+      });
+    }
+
+    function applyStateFor(items, nowMin) {
+      items.forEach(it => {
+        const startMin = toMin(it.start);
+        let endMin = toMin(it.end);
+        if (it.end === "00:00") endMin = 0; // keep 0 to let helper convert to 1440
+
+        const active = isActive(nowMin, startMin, endMin);
+        const past = isPast(nowMin, startMin, endMin);
+
+        // apply to ALL clones with same data-key
+        document.querySelectorAll(`.item[data-key="${it.key}"]`).forEach(el => {
+          if (active) {
+            el.classList.add("active");
+          } else {
+            // Late Snack special: never dim
+            if (it.allowPastDim && past) el.classList.add("past");
+          }
+        });
+      });
+    }
+
+    // ====== CLOCK ======
+    function updateTime() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      const nowMin = (h * 60) + m;
+
+      document.getElementById("clock").textContent =
+        now.toLocaleTimeString("en-GB", { hour12: false });
+
+      document.getElementById("date").textContent =
+        now.toLocaleDateString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        });
+
+      clearStates();
+      applyStateFor(topBand, nowMin);
+      applyStateFor(bottomBand, nowMin);
+    }
+
+    // ====== INIT ======
+    renderBand(document.getElementById("trackTop"), topBand);
+    renderBand(document.getElementById("trackBottom"), bottomBand);
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
 </body>
 </html>
