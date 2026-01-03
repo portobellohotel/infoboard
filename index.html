@@ -27,6 +27,44 @@
       user-select: none; pointer-events: none;
     }
 
+    /* WEATHER (TOP RIGHT) */
+    .weather {
+      position: absolute; top: 26px; right: 26px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      text-align: right;
+      min-width: 300px;
+    }
+    .weather .loc { font-size: 15px; opacity: .92; letter-spacing:.2px; }
+
+    /* top line: icon + condition */
+    .weather .topline{
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+    .weather .icon{
+      font-size: 26px;
+      line-height: 1;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.06));
+    }
+    .weather .cond{
+      font-size: 14px;
+      opacity: .88;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+
+    .weather .main { margin-top: 4px; font-size: 22px; font-weight: 800; }
+    .weather .sub  { margin-top: 2px; font-size: 14px; opacity: .86; }
+    .weather .sub2 { margin-top: 2px; font-size: 14px; opacity: .86; }
+    .weather .muted{ font-size: 12px; opacity: .55; margin-top: 6px; }
+
     /* CLOCK + DATE */
     #clock {
       font-size: clamp(72px, 9vw, 120px);
@@ -38,7 +76,7 @@
       opacity: .86; letter-spacing: 1px; font-weight: 300;
     }
 
-    /* BOTTOM AREA (3 ROWS) */
+    /* BOTTOM AREA (2 ROWS) */
     .bottom {
       position: absolute; left: 0; right: 0; bottom: 0;
       padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) + 4px);
@@ -56,27 +94,19 @@
       -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
     }
 
-    /* The scrolling belt */
-    .belt { display: inline-flex; align-items: center; gap: 12px; will-change: transform; }
+    .belt {
+      display: inline-flex; align-items: center; gap: 12px;
+      will-change: transform;
+    }
     .content { display: inline-flex; align-items: center; gap: 12px; }
     .sep { opacity: .35; }
 
-    /* Active / Past states */
     @keyframes pulse{ 0%{opacity:1} 50%{opacity:.45} 100%{opacity:1} }
-    .active{
-      animation: pulse 1.1s ease-in-out infinite;
-      color:#ffd166; font-weight:700;
-      text-shadow:0 0 14px rgba(255,209,102,.18);
-    }
+    .active{ animation: pulse 1.1s ease-in-out infinite; color:#ffd166; font-weight:700; text-shadow:0 0 14px rgba(255,209,102,.18); }
     .activeGlow{ text-shadow:0 0 18px rgba(255,209,102,.20), 0 0 34px rgba(255,209,102,.10); }
-    .live{
-      animation: pulse 1s ease-in-out infinite;
-      color:#8be9fd; font-weight:800;
-      text-shadow:0 0 16px rgba(139,233,253,.18);
-    }
+    .live{ animation: pulse 1s ease-in-out infinite; color:#8be9fd; font-weight:800; text-shadow:0 0 16px rgba(139,233,253,.18); }
     .past{ opacity:.35; filter:saturate(.9); }
 
-    /* Badges */
     .badge{
       display:inline-block; margin-left:10px; padding:4px 10px; border-radius:999px;
       font-size:.65em; letter-spacing:.6px; font-weight:800; vertical-align:middle;
@@ -85,7 +115,6 @@
     .badge-live{ background:rgba(139,233,253,.14); border:1px solid rgba(139,233,253,.25); }
     .active .badge, .live .badge{ opacity:1!important; }
 
-    /* Marquee */
     @keyframes marqueeShift{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
     .ticker.marquee .belt{ animation: marqueeShift var(--dur, 22s) linear infinite; }
   </style>
@@ -94,49 +123,53 @@
 
   <img src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
+  <!-- Weather box -->
+  <div class="weather" id="weatherBox">
+    <div class="loc" id="wLoc">Antalya / Konyaaltı</div>
+
+    <div class="topline">
+      <div class="icon" id="wIcon">🌡️</div>
+      <div class="cond" id="wCond">Loading…</div>
+    </div>
+
+    <div class="main" id="wMain">--°C</div>
+    <div class="sub"  id="wSub">Feels like --°C • Humidity --%</div>
+    <div class="sub2" id="wSub2">Wind -- km/h -- • Pressure ---- hPa</div>
+    <div class="muted" id="wUpd">Updating…</div>
+  </div>
+
   <div id="clock"></div>
   <div id="date"></div>
 
   <div class="bottom">
-
-    <!-- ROW 1 (Top band) -->
+    <!-- Row 1 -->
     <div id="row1" class="ticker">
       <div class="belt">
         <div class="content" id="r1">
-          <span id="breakfast">🍳 Breakfast 07:00–10:30</span><span class="sep">|</span>
+          <span id="breakfast">🍳 Breakfast 07:00–10:00</span><span class="sep">|</span>
+          <span id="lateBreakfast">🥐 Late Breakfast 10:00–10:30</span><span class="sep">|</span>
           <span id="lunch">🍽️ Lunch 12:30–14:00</span><span class="sep">|</span>
-          <span id="patisserie">🍰 Patisserie (Sailor's) 12:00–18:00</span>
+          <span id="snack">🍪 Snack 14:30–15:30</span>
         </div>
       </div>
     </div>
 
-    <!-- ROW 2 (Middle band) -->
+    <!-- Row 2 -->
     <div id="row2" class="ticker">
       <div class="belt">
         <div class="content" id="r2">
-          <span id="snack">🍪 Snack 14:30–15:30</span><span class="sep">|</span>
           <span id="dinner">🍷 Dinner 18:30–21:00</span><span class="sep">|</span>
-          <span id="sailorsBar">🍺 Sailor's Pub Bar 20:30–22:30</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROW 3 (Bottom band) -->
-    <div id="row3" class="ticker">
-      <div class="belt">
-        <div class="content" id="r3">
           <span id="show">🎉 Animation Show 21:30</span><span class="sep">|</span>
           <span id="lateSnack">🌙 Late Snack 23:00–06:00</span><span class="sep">|</span>
           <span id="lobbyBar">🍸 Lobby Bar 08:30–00:00</span>
         </div>
       </div>
     </div>
-
   </div>
 
   <script>
     /* ---------- Time helpers ---------- */
-    const ids = ["breakfast","lunch","patisserie","snack","dinner","sailorsBar","show","lateSnack","lobbyBar"];
+    const ids = ["breakfast","lateBreakfast","lunch","snack","dinner","show","lateSnack","lobbyBar"];
     const toMin = (h,m)=>h*60+m;
     const nowMin = d=>d.getHours()*60 + d.getMinutes();
     const inRange = (n,s,e)=> s<e ? (n>=s && n<=e) : (s>e ? (n>=s || n<=e) : n===s);
@@ -144,19 +177,14 @@
 
     /* ---------- Schedule ---------- */
     const schedule = {
-      breakfast:   {start:toMin(7,0),   end:toMin(10,30), badge:"NOW OPEN", type:"food"},
-      lunch:       {start:toMin(12,30), end:toMin(14,0),  badge:"NOW OPEN", type:"food"},
-      patisserie:  {start:toMin(12,0),  end:toMin(18,0),  badge:"NOW OPEN", type:"food"},
-
-      snack:       {start:toMin(14,30), end:toMin(15,30), badge:"NOW OPEN", type:"food"},
-      dinner:      {start:toMin(18,30), end:toMin(21,0),  badge:"NOW OPEN", type:"food"},
-      sailorsBar:  {start:toMin(20,30), end:toMin(22,30), badge:"NOW OPEN", type:"food"},
-
-      // Animation Show: LIVE NOW (we set 21:30–22:30; adjust if you want)
-      show:        {start:toMin(21,30), end:toMin(22,30), badge:"LIVE NOW", type:"live"},
-
-      lateSnack:   {start:toMin(23,0),  end:toMin(6,0),   badge:"NOW OPEN", type:"food"}, // overnight
-      lobbyBar:    {start:toMin(8,30),  end:1440,         badge:"NOW OPEN", type:"food"}  // up to midnight
+      breakfast:     {start:toMin(7,0),   end:toMin(10,0),  badge:"NOW OPEN", type:"food"},
+      lateBreakfast: {start:toMin(10,0),  end:toMin(10,30), badge:"NOW OPEN", type:"food"},
+      lunch:         {start:toMin(12,30), end:toMin(14,0),  badge:"NOW OPEN", type:"food"},
+      snack:         {start:toMin(14,30), end:toMin(15,30), badge:"NOW OPEN", type:"food"},
+      dinner:        {start:toMin(18,30), end:toMin(21,0),  badge:"NOW OPEN", type:"food"},
+      show:          {start:toMin(21,30), end:toMin(22,30), badge:"LIVE NOW", type:"live"},
+      lateSnack:     {start:toMin(23,0),  end:toMin(6,0),   badge:"NOW OPEN", type:"food"}, // overnight
+      lobbyBar:      {start:toMin(8,30),  end:1440,         badge:"NOW OPEN", type:"food"}  // up to midnight
     };
 
     /* ---------- States & badges ---------- */
@@ -176,22 +204,15 @@
     function updateStates(d){
       const n=nowMin(d);
       clearStates();
-
       Object.entries(schedule).forEach(([key,rule])=>{
         const el=document.getElementById(key);
         const active=inRange(n,rule.start,rule.end);
         const past  =isPast(n,rule.start,rule.end);
 
         if(active){
-          if(rule.type==="live"){
-            el.classList.add("live","activeGlow");
-            addBadge(el,rule.badge,true);
-          } else {
-            el.classList.add("active","activeGlow");
-            addBadge(el,rule.badge,false);
-          }
-        } else if (past && key !== "lateSnack") {
-          // Late Snack asla silik olmasın (hep beyaz dursun)
+          if(rule.type==="live"){ el.classList.add("live","activeGlow"); addBadge(el,rule.badge,true); }
+          else{ el.classList.add("active","activeGlow"); addBadge(el,rule.badge,false); }
+        } else if (past){
           el.classList.add("past");
         }
       });
@@ -200,10 +221,8 @@
     /* ---------- Clock & date ---------- */
     function tick(){
       const d=new Date();
-      document.getElementById("clock").textContent =
-        d.toLocaleTimeString("en-GB",{hour12:false});
-      document.getElementById("date").textContent  =
-        d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+      document.getElementById("clock").textContent = d.toLocaleTimeString("en-GB",{hour12:false});
+      document.getElementById("date").textContent  = d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
       updateStates(d);
     }
 
@@ -216,19 +235,17 @@
       const needed = content.scrollWidth > row.clientWidth + 10;
       if(!needed){
         row.classList.remove("marquee");
-        const clone=belt.querySelector(".content.clone");
-        if(clone) clone.remove();
+        const clone=belt.querySelector(".content.clone"); if(clone) clone.remove();
         return;
       }
 
       if(!belt.querySelector(".content.clone")){
-        const clone = content.cloneNode(true);
-        clone.classList.add("clone");
+        const clone = content.cloneNode(true); clone.classList.add("clone");
         belt.appendChild(clone);
       }
 
       const px = content.scrollWidth;
-      const dur = Math.max(22, Math.min(60, px/35)); // 22–60s
+      const dur = Math.max(22, Math.min(60, px/35));
       row.style.setProperty('--dur', dur+'s');
       row.classList.add("marquee");
     }
@@ -236,13 +253,106 @@
     function setupAllMarquees(){
       setupMarquee("row1");
       setupMarquee("row2");
-      setupMarquee("row3");
+    }
+
+    /* ---------- Weather (Antalya / Konyaaltı) ---------- */
+    const WEATHER = {
+      name: "Antalya / Konyaaltı",
+      lat: 36.863965,
+      lon: 30.630398,
+      tz: "Europe/Istanbul"
+    };
+
+    function fmtTimeOnly(d){
+      return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    }
+    function degToCardinal(deg){
+      if (deg === null || deg === undefined || Number.isNaN(deg)) return "";
+      const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+      const idx = Math.round(((deg % 360) / 22.5)) % 16;
+      return dirs[idx];
+    }
+
+    // Open-Meteo WMO Weather interpretation codes
+    function wmoToIconAndText(code, isDay=true){
+      const c = Number(code);
+      if(Number.isNaN(c)) return { icon:"🌡️", text:"Weather" };
+
+      // Thunderstorm
+      if (c === 95) return { icon:"⛈️", text:"Thunderstorm" };
+      if (c === 96 || c === 99) return { icon:"⛈️", text:"Thunderstorm (hail)" };
+
+      // Snow / sleet
+      if (c === 71 || c === 73 || c === 75) return { icon:"❄️", text:"Snow" };
+      if (c === 77) return { icon:"🌨️", text:"Snow grains" };
+      if (c === 85 || c === 86) return { icon:"🌨️", text:"Snow showers" };
+      if (c === 66 || c === 67) return { icon:"🌨️", text:"Freezing rain" };
+
+      // Rain / drizzle
+      if (c === 51 || c === 53 || c === 55) return { icon:"🌦️", text:"Drizzle" };
+      if (c === 56 || c === 57) return { icon:"🌧️", text:"Freezing drizzle" };
+      if (c === 61 || c === 63 || c === 65) return { icon:"🌧️", text:"Rain" };
+      if (c === 80 || c === 81 || c === 82) return { icon:"🌧️", text:"Rain showers" };
+
+      // Fog / haze / dust
+      if (c === 45 || c === 48) return { icon:"🌫️", text:"Fog" };
+      if (c === 0) return { icon: isDay ? "☀️" : "🌙", text:"Clear sky" };
+      if (c === 1) return { icon: isDay ? "🌤️" : "🌙", text:"Mostly clear" };
+      if (c === 2) return { icon:"⛅", text:"Partly cloudy" };
+      if (c === 3) return { icon:"☁️", text:"Overcast" };
+
+      return { icon:"🌡️", text:"Weather" };
+    }
+
+    async function fetchWeather(){
+      const url =
+        "https://api.open-meteo.com/v1/forecast"
+        + "?latitude=" + encodeURIComponent(WEATHER.lat)
+        + "&longitude=" + encodeURIComponent(WEATHER.lon)
+        + "&current=" + encodeURIComponent(
+            "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,is_day"
+          )
+        + "&timezone=" + encodeURIComponent(WEATHER.tz);
+
+      try{
+        const r = await fetch(url, { cache: "no-store" });
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        const j = await r.json();
+        const c = j.current || {};
+
+        const t = Math.round(c.temperature_2m);
+        const feels = Math.round(c.apparent_temperature);
+        const hum = Math.round(c.relative_humidity_2m);
+        const wind = Math.round(c.wind_speed_10m);
+        const wdir = degToCardinal(Number(c.wind_direction_10m));
+        const pres = Math.round(c.surface_pressure);
+
+        const isDay = Number(c.is_day) === 1;
+        const wmo = c.weather_code;
+        const wx = wmoToIconAndText(wmo, isDay);
+
+        document.getElementById("wLoc").textContent = WEATHER.name;
+        document.getElementById("wIcon").textContent = wx.icon;
+        document.getElementById("wCond").textContent = wx.text;
+
+        document.getElementById("wMain").textContent = `${t}°C`;
+        document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Humidity ${hum}%`;
+        document.getElementById("wSub2").textContent = `Wind ${wind} km/h ${wdir} • Pressure ${pres} hPa`;
+        document.getElementById("wUpd").textContent  = `Updated ${fmtTimeOnly(new Date())}`;
+      }catch(e){
+        document.getElementById("wCond").textContent = "Weather unavailable";
+        document.getElementById("wUpd").textContent = "—";
+      }
     }
 
     /* ---------- Init ---------- */
     tick(); setupAllMarquees();
+    fetchWeather();
+
     setInterval(tick, 1000);
     setInterval(setupAllMarquees, 4000);
+    setInterval(fetchWeather, 10 * 60 * 1000);
+
     window.addEventListener('resize', setupAllMarquees);
   </script>
 </body>
