@@ -1,578 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Porto Bello Hotel | Time & Date</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root{ --row-gap:10px; --pad-x:18px; --pad-y:14px; }
+<meta charset="UTF-8" />
+<title>Porto Bello Hotel | Time & Date</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+:root{ --row-gap:10px; --pad-x:18px; --pad-y:14px; }
 
-    html, body {
-      margin: 0; width: 100%; height: 100%;
-      background: #0b1320; color: #fff;
-      font-family: Arial, Helvetica, sans-serif;
-      overflow: hidden;
-    }
+html, body {
+margin: 0; width: 100%; height: 100%;
+background: #0b1320; color: #fff;
+font-family: Arial, Helvetica, sans-serif;
+overflow: hidden;
+}
 
-    body {
-      position: relative; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
+body {
+position: relative; display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+}
 
-    /* LOGO */
-    .logo {
+/* LOGO */
+.logo {
+      position: absolute; top: 4px; left: 0px;
       position: absolute; top: 5px; left: 0px;
-      width: 190px; opacity: .88;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,.08));
-      user-select: none; pointer-events: none;
-      z-index: 6;
-    }
+width: 190px; opacity: .88;
+filter: drop-shadow(0 0 10px rgba(255,255,255,.08));
+user-select: none; pointer-events: none;
+z-index: 6;
+}
 
-    /* ================================
-       WEATHER (TOP RIGHT) — PREMIUM SHADOW (NO BOX LOOK)
-       ================================= */
-    .weather {
-      /* ölçek kontrolü (bunu değiştirince her şey birlikte büyür/küçülür) */
-      --w-scale: 1.5;
+/* ================================
+      WEATHER (TOP RIGHT) — PREMIUM SHADOW (NO BOX LOOK)
+      ================================= */
+.weather {
+/* ölçek kontrolü (bunu değiştirince her şey birlikte büyür/küçülür) */
+--w-scale: 1.5;
 
-      position: absolute; top: 3px; right: 3px;
-      padding: calc(10px * var(--w-scale)) calc(12px * var(--w-scale));
+position: absolute; top: 3px; right: 3px;
+padding: calc(10px * var(--w-scale)) calc(12px * var(--w-scale));
 
-      /* KUTU HİSSİNİ SİL: çok hafif arka plan + blur minimum */
-      background: rgba(0,0,0,.06);
-      backdrop-filter: blur(2px);
+/* KUTU HİSSİNİ SİL: çok hafif arka plan + blur minimum */
+background: rgba(0,0,0,.06);
+backdrop-filter: blur(2px);
 
-      /* Border yok gibi (premium hissi için çok hafif) */
-      border: 1px solid rgba(255,255,255,.04);
+/* Border yok gibi (premium hissi için çok hafif) */
+border: 1px solid rgba(255,255,255,.04);
 
-      /* Çok küçük radius, kutu gibi görünmesin */
-      border-radius: calc(10px * var(--w-scale));
+/* Çok küçük radius, kutu gibi görünmesin */
+border-radius: calc(10px * var(--w-scale));
 
-      text-align: right;
-      width: fit-content;
-      max-width: min(560px, 46vw);
-      box-sizing: border-box;
-      z-index: 5;
+text-align: right;
+width: fit-content;
+max-width: min(560px, 46vw);
+box-sizing: border-box;
+z-index: 5;
 
-      /* panel gölgesi çok hafif */
-      box-shadow:
-        0 10px 30px rgba(0,0,0,.18),
-        0 0 0 1px rgba(255,255,255,.02) inset;
-    }
+/* panel gölgesi çok hafif */
+box-shadow:
+0 10px 30px rgba(0,0,0,.18),
+0 0 0 1px rgba(255,255,255,.02) inset;
+}
 
-    /* Weather yazılarına premium gölge */
-    .weather, .weather *{
-      text-shadow:
-        0 2px 10px rgba(0,0,0,.55),
-        0 0 18px rgba(0,0,0,.35);
-    }
+/* Weather yazılarına premium gölge */
+.weather, .weather *{
+text-shadow:
+0 2px 10px rgba(0,0,0,.55),
+0 0 18px rgba(0,0,0,.35);
+}
 
-    .weather .loc {
-      font-size: calc(15px * var(--w-scale));
-      opacity: .95;
-      letter-spacing:.2px;
-      white-space: nowrap;
-    }
+.weather .loc {
+font-size: calc(15px * var(--w-scale));
+opacity: .95;
+letter-spacing:.2px;
+white-space: nowrap;
+}
 
-    .weather .topline{
-      margin-top: calc(6px * var(--w-scale));
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: calc(10px * var(--w-scale));
-      flex-wrap: nowrap;
-    }
+.weather .topline{
+margin-top: calc(6px * var(--w-scale));
+display: flex;
+justify-content: flex-end;
+align-items: center;
+gap: calc(10px * var(--w-scale));
+flex-wrap: nowrap;
+}
 
-    .weather .icon{
-      font-size: calc(26px * var(--w-scale));
-      line-height: 1;
-      filter:
-        drop-shadow(0 2px 10px rgba(0,0,0,.55))
-        drop-shadow(0 0 14px rgba(255,255,255,.08));
-      flex: 0 0 auto;
-    }
+.weather .icon{
+font-size: calc(26px * var(--w-scale));
+line-height: 1;
+filter:
+drop-shadow(0 2px 10px rgba(0,0,0,.55))
+drop-shadow(0 0 14px rgba(255,255,255,.08));
+flex: 0 0 auto;
+}
 
-    .weather .cond{
-      font-size: calc(14px * var(--w-scale));
-      opacity: .92;
-      letter-spacing: .2px;
-      white-space: nowrap;
-      flex: 0 1 auto;
-    }
+.weather .cond{
+font-size: calc(14px * var(--w-scale));
+opacity: .92;
+letter-spacing: .2px;
+white-space: nowrap;
+flex: 0 1 auto;
+}
 
-    .weather .main {
-      margin-top: calc(4px * var(--w-scale));
-      font-size: calc(22px * var(--w-scale));
-      font-weight: 800;
-      white-space: nowrap;
-    }
+.weather .main {
+margin-top: calc(4px * var(--w-scale));
+font-size: calc(22px * var(--w-scale));
+font-weight: 800;
+white-space: nowrap;
+}
 
-    .weather .sub  {
-      margin-top: calc(2px * var(--w-scale));
-      font-size: calc(14px * var(--w-scale));
-      opacity: .90;
-      white-space: nowrap;
-    }
+.weather .sub  {
+margin-top: calc(2px * var(--w-scale));
+font-size: calc(14px * var(--w-scale));
+opacity: .90;
+white-space: nowrap;
+}
 
-    .weather .sub2 {
-      margin-top: calc(2px * var(--w-scale));
-      font-size: calc(14px * var(--w-scale));
-      opacity: .90;
-      white-space: nowrap;
-    }
+.weather .sub2 {
+margin-top: calc(2px * var(--w-scale));
+font-size: calc(14px * var(--w-scale));
+opacity: .90;
+white-space: nowrap;
+}
 
-    .weather .muted{
-      font-size: calc(12px * var(--w-scale));
-      opacity: .70;
-      margin-top: calc(6px * var(--w-scale));
-      white-space: nowrap;
-    }
+.weather .muted{
+font-size: calc(12px * var(--w-scale));
+opacity: .70;
+margin-top: calc(6px * var(--w-scale));
+white-space: nowrap;
+}
 
-    /* küçük ekranlar */
-    @media (max-width: 600px){
-      .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
-    }
-    /* ================================ */
+/* küçük ekranlar */
+@media (max-width: 600px){
+.weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
+}
+/* ================================ */
 
-    /* CLOCK + DATE */
-    #clock {
-      font-size: clamp(72px, 9vw, 120px);
-      font-weight: 750; letter-spacing: 4px;
-      text-shadow: 0 0 12px rgba(255,255,255,.15), 0 0 24px rgba(255,255,255,.08);
-    }
-    #date {
-      margin-top: 18px; font-size: clamp(24px, 3.2vw, 44px);
-      opacity: .86; letter-spacing: 1px; font-weight: 300;
-    }
+/* CLOCK + DATE */
+#clock {
+font-size: clamp(72px, 9vw, 120px);
+font-weight: 750; letter-spacing: 4px;
+text-shadow: 0 0 12px rgba(255,255,255,.15), 0 0 24px rgba(255,255,255,.08);
+}
+#date {
+margin-top: 18px; font-size: clamp(24px, 3.2vw, 44px);
+opacity: .86; letter-spacing: 1px; font-weight: 300;
+}
 
-    /* BOTTOM AREA (3 ROWS) */
-    .bottom {
-      position: absolute; left: 0; right: 0; bottom: 0;
-      padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) + 4px);
-      background: rgba(0,0,0,.18); backdrop-filter: blur(6px);
-      border-top: 1px solid rgba(255,255,255,.08);
-      display: flex; flex-direction: column; gap: var(--row-gap);
-      z-index: 4;
-    }
+/* BOTTOM AREA (3 ROWS) */
+.bottom {
+position: absolute; left: 0; right: 0; bottom: 0;
+padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) + 4px);
+background: rgba(0,0,0,.18); backdrop-filter: blur(6px);
+border-top: 1px solid rgba(255,255,255,.08);
+display: flex; flex-direction: column; gap: var(--row-gap);
+z-index: 4;
+}
 
-    .ticker {
-      position: relative; width: 100%;
-      line-height: 1.35; font-size: clamp(16px, 2.2vw, 28px);
-      white-space: nowrap;
-      overflow: hidden;
-      mask-image: linear-gradient(90deg, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
-      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
-    }
+.ticker {
+position: relative; width: 100%;
+line-height: 1.35; font-size: clamp(16px, 2.2vw, 28px);
+white-space: nowrap;
+overflow: hidden;
+mask-image: linear-gradient(90deg, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
+-webkit-mask-image: linear-gradient(90deg, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
+}
 
-    /* The scrolling belt (created once per row) */
-    .belt {
-      display: inline-flex; align-items: center; gap: 12px;
-      will-change: transform;
-    }
-    .content { display: inline-flex; align-items: center; gap: 12px; }
-    .sep { opacity: .35; }
+/* The scrolling belt (created once per row) */
+.belt {
+display: inline-flex; align-items: center; gap: 12px;
+will-change: transform;
+}
+.content { display: inline-flex; align-items: center; gap: 12px; }
+.sep { opacity: .35; }
 
-    /* Active / Past states */
-    @keyframes pulse{ 0%{opacity:1} 50%{opacity:.45} 100%{opacity:1} }
-    .active{ animation: pulse 1.1s ease-in-out infinite; color:#ffd166; font-weight:700; text-shadow:0 0 14px rgba(255,209,102,.18); }
-    .activeGlow{ text-shadow:0 0 18px rgba(255,209,102,.20), 0 0 34px rgba(255,209,102,.10); }
-    .live{ animation: pulse 1s ease-in-out infinite; color:#8be9fd; font-weight:800; text-shadow:0 0 16px rgba(139,233,253,.18); }
-    .past{ opacity:.35; filter:saturate(.9); }
+/* Active / Past states */
+@keyframes pulse{ 0%{opacity:1} 50%{opacity:.45} 100%{opacity:1} }
+.active{ animation: pulse 1.1s ease-in-out infinite; color:#ffd166; font-weight:700; text-shadow:0 0 14px rgba(255,209,102,.18); }
+.activeGlow{ text-shadow:0 0 18px rgba(255,209,102,.20), 0 0 34px rgba(255,209,102,.10); }
+.live{ animation: pulse 1s ease-in-out infinite; color:#8be9fd; font-weight:800; text-shadow:0 0 16px rgba(139,233,253,.18); }
+.past{ opacity:.35; filter:saturate(.9); }
 
-    /* Badges */
-    .badge{
-      display:inline-block; margin-left:10px; padding:4px 10px; border-radius:999px;
-      font-size:.65em; letter-spacing:.6px; font-weight:800; vertical-align:middle;
-      background: rgba(255,209,102,.14); border:1px solid rgba(255,209,102,.22); text-transform:uppercase;
-    }
-    .badge-live{ background:rgba(139,233,253,.14); border:1px solid rgba(139,233,253,.25); }
-    .active .badge, .live .badge{ opacity:1!important; }
+/* Badges */
+.badge{
+display:inline-block; margin-left:10px; padding:4px 10px; border-radius:999px;
+font-size:.65em; letter-spacing:.6px; font-weight:800; vertical-align:middle;
+background: rgba(255,209,102,.14); border:1px solid rgba(255,209,102,.22); text-transform:uppercase;
+}
+.badge-live{ background:rgba(139,233,253,.14); border:1px solid rgba(139,233,253,.25); }
+.active .badge, .live .badge{ opacity:1!important; }
 
-    /* Marquee animation (duration set via inline style) */
-    @keyframes marqueeShift{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
-    .ticker.marquee .belt{ animation: marqueeShift var(--dur, 22s) linear infinite; }
+/* Marquee animation (duration set via inline style) */
+@keyframes marqueeShift{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.ticker.marquee .belt{ animation: marqueeShift var(--dur, 22s) linear infinite; }
 
-    /* ================================
-       WINTER MODE: SNOW (overlay)
-       ================================= */
-    #snowCanvas{
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 3; /* üstte ama UI'yi örtmesin */
-    }
-    /* İstersen karı biraz "premium" göstermek için çok hafif parıltı */
-    .snowGlow{
-      filter: drop-shadow(0 0 6px rgba(255,255,255,.12));
-    }
-  </style>
+/* ================================
+      WINTER MODE: SNOW (overlay)
+      ================================= */
+#snowCanvas{
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: 3; /* üstte ama UI'yi örtmesin */
+}
+/* İstersen karı biraz "premium" göstermek için çok hafif parıltı */
+.snowGlow{
+filter: drop-shadow(0 0 6px rgba(255,255,255,.12));
+}
+</style>
 </head>
 <body>
 
-  <!-- Snow overlay -->
-  <canvas id="snowCanvas" class="snowGlow"></canvas>
+<!-- Snow overlay -->
+<canvas id="snowCanvas" class="snowGlow"></canvas>
 
-  <img src="logo.png" class="logo" alt="Porto Bello Hotel" />
+<img src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
-  <!-- Weather -->
-  <div class="weather" id="weatherBox">
-    <div class="loc" id="wLoc">Antalya / Konyaaltı</div>
-    <div class="topline">
-      <div class="icon" id="wIcon">🌡️</div>
-      <div class="cond" id="wCond">Loading…</div>
-    </div>
-    <div class="main" id="wMain">--°C</div>
-    <div class="sub"  id="wSub">Feels like --°C • Humidity --%</div>
-    <div class="sub2" id="wSub2">Wind -- km/h -- • Pressure ---- hPa</div>
-    <div class="muted" id="wUpd">Updating…</div>
-  </div>
+<!-- Weather -->
+<div class="weather" id="weatherBox">
+<div class="loc" id="wLoc">Antalya / Konyaaltı</div>
+<div class="topline">
+<div class="icon" id="wIcon">🌡️</div>
+<div class="cond" id="wCond">Loading…</div>
+</div>
+<div class="main" id="wMain">--°C</div>
+<div class="sub"  id="wSub">Feels like --°C • Humidity --%</div>
+<div class="sub2" id="wSub2">Wind -- km/h -- • Pressure ---- hPa</div>
+<div class="muted" id="wUpd">Updating…</div>
+</div>
 
-  <div id="clock"></div>
-  <div id="date"></div>
+<div id="clock"></div>
+<div id="date"></div>
 
-  <div class="bottom">
-    <!-- Row 1 (Top band) -->
-    <div id="row1" class="ticker">
-      <div class="belt">
-        <div class="content" id="r1">
-          <span id="breakfast">🍳 Breakfast 07:00–10:30</span><span class="sep">|</span>
-          <span id="lunch">🍽️ Lunch 12:30–14:00</span><span class="sep">|</span>
+<div class="bottom">
+<!-- Row 1 (Top band) -->
+<div id="row1" class="ticker">
+<div class="belt">
+<div class="content" id="r1">
+<span id="breakfast">🍳 Breakfast 07:00–10:30</span><span class="sep">|</span>
+<span id="lunch">🍽️ Lunch 12:30–14:00</span><span class="sep">|</span>
+          <span id="patisserie">🍰 Patisserie (Sailor's Pub) 12:00–18:00</span>
           <span id="patisserie">🍰 Patisserie (Sailor's) 12:00–18:00</span>
-        </div>
-      </div>
-    </div>
+</div>
+</div>
+</div>
 
-    <!-- Row 2 (Middle band) -->
-    <div id="row2" class="ticker">
-      <div class="belt">
-        <div class="content" id="r2">
-          <span id="snack">🍪 Snack 14:30–15:30</span><span class="sep">|</span>
-          <span id="dinner">🍷 Dinner 18:30–21:00</span><span class="sep">|</span>
-          <span id="sailorsBar">🍺 Sailor's Pub Bar 20:30–22:30</span>
-        </div>
-      </div>
-    </div>
+<!-- Row 2 (Middle band) -->
+<div id="row2" class="ticker">
+<div class="belt">
+<div class="content" id="r2">
+<span id="snack">🍪 Snack 14:30–15:30</span><span class="sep">|</span>
+<span id="dinner">🍷 Dinner 18:30–21:00</span><span class="sep">|</span>
+<span id="sailorsBar">🍺 Sailor's Pub Bar 20:30–22:30</span>
+</div>
+</div>
+</div>
 
-    <!-- Row 3 (Bottom band) -->
-    <div id="row3" class="ticker">
-      <div class="belt">
-        <div class="content" id="r3">
-          <span id="show">🎉 Animation 21:30</span><span class="sep">|</span>
-          <span id="lateSnack">🌙 Late Snack 23:00–06:00</span><span class="sep">|</span>
-          <span id="lobbyBar">🍸 Lobby Bar 08:30–00:00</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Row 3 (Bottom band) -->
+<div id="row3" class="ticker">
+<div class="belt">
+<div class="content" id="r3">
+<span id="show">🎉 Animation 21:30</span><span class="sep">|</span>
+<span id="lateSnack">🌙 Late Snack 23:00–06:00</span><span class="sep">|</span>
+<span id="lobbyBar">🍸 Lobby Bar 08:30–00:00</span>
+</div>
+</div>
+</div>
+</div>
 
-  <script>
-    /* ---------- Time helpers ---------- */
-    const ids = ["breakfast","lunch","patisserie","snack","dinner","sailorsBar","show","lateSnack","lobbyBar"];
-    const toMin = (h,m)=>h*60+m;
-    const nowMin = d=>d.getHours()*60 + d.getMinutes();
-    const inRange = (n,s,e)=> s<e ? (n>=s && n<=e) : (s>e ? (n>=s || n<=e) : n===s);
-    const isPast  = (n,s,e)=> s<e ? (n>e) : ((n>e) && (n<s)); // overnight gap
+<script>
+/* ---------- Time helpers ---------- */
+const ids = ["breakfast","lunch","patisserie","snack","dinner","sailorsBar","show","lateSnack","lobbyBar"];
+const toMin = (h,m)=>h*60+m;
+const nowMin = d=>d.getHours()*60 + d.getMinutes();
+const inRange = (n,s,e)=> s<e ? (n>=s && n<=e) : (s>e ? (n>=s || n<=e) : n===s);
+const isPast  = (n,s,e)=> s<e ? (n>e) : ((n>e) && (n<s)); // overnight gap
 
-    /* ---------- Schedule ---------- */
-    const schedule = {
-      breakfast:   {start:toMin(7,0),   end:toMin(10,30), badge:"NOW OPEN", type:"food"},
-      lunch:       {start:toMin(12,30), end:toMin(14,0),  badge:"NOW OPEN", type:"food"},
-      patisserie:  {start:toMin(12,0),  end:toMin(18,0),  badge:"NOW OPEN", type:"food"},
+/* ---------- Schedule ---------- */
+const schedule = {
+breakfast:   {start:toMin(7,0),   end:toMin(10,30), badge:"NOW OPEN", type:"food"},
+lunch:       {start:toMin(12,30), end:toMin(14,0),  badge:"NOW OPEN", type:"food"},
+patisserie:  {start:toMin(12,0),  end:toMin(18,0),  badge:"NOW OPEN", type:"food"},
 
-      snack:       {start:toMin(14,30), end:toMin(15,30), badge:"NOW OPEN", type:"food"},
-      dinner:      {start:toMin(18,30), end:toMin(21,0),  badge:"NOW OPEN", type:"food"},
-      sailorsBar:  {start:toMin(20,30), end:toMin(22,30), badge:"NOW OPEN", type:"food"},
+snack:       {start:toMin(14,30), end:toMin(15,30), badge:"NOW OPEN", type:"food"},
+dinner:      {start:toMin(18,30), end:toMin(21,0),  badge:"NOW OPEN", type:"food"},
+sailorsBar:  {start:toMin(20,30), end:toMin(22,30), badge:"NOW OPEN", type:"food"},
 
-      show:        {start:toMin(21,30), end:toMin(22,30), badge:"LIVE NOW", type:"live"},
+show:        {start:toMin(21,30), end:toMin(22,30), badge:"LIVE NOW", type:"live"},
 
-      // Late Snack: overnight + noPast (silikleşmesin)
-      lateSnack:   {start:toMin(23,0),  end:toMin(6,0),   badge:"NOW OPEN", type:"food", noPast:true},
+// Late Snack: overnight + noPast (silikleşmesin)
+lateSnack:   {start:toMin(23,0),  end:toMin(6,0),   badge:"NOW OPEN", type:"food", noPast:true},
 
-      // Lobby Bar: 08:30–00:00
-      lobbyBar:    {start:toMin(8,30),  end:1440,         badge:"NOW OPEN", type:"food"}
-    };
+// Lobby Bar: 08:30–00:00
+lobbyBar:    {start:toMin(8,30),  end:1440,         badge:"NOW OPEN", type:"food"}
+};
 
-    /* ---------- States & badges ---------- */
-    function clearStates(){
-      ids.forEach(id=>{
-        const el=document.getElementById(id);
-        if(!el) return;
-        el.classList.remove("active","activeGlow","live","past");
-        const b=el.querySelector(".badge"); if(b) b.remove();
-      });
-    }
-    function addBadge(el,text,isLive=false){
-      const b=document.createElement("span");
-      b.className="badge"+(isLive?" badge-live":"");
-      b.textContent=text; el.appendChild(b);
-    }
+/* ---------- States & badges ---------- */
+function clearStates(){
+ids.forEach(id=>{
+const el=document.getElementById(id);
+if(!el) return;
+el.classList.remove("active","activeGlow","live","past");
+const b=el.querySelector(".badge"); if(b) b.remove();
+});
+}
+function addBadge(el,text,isLive=false){
+const b=document.createElement("span");
+b.className="badge"+(isLive?" badge-live":"");
+b.textContent=text; el.appendChild(b);
+}
 
-    function updateStates(d){
-      const n=nowMin(d);
-      clearStates();
+function updateStates(d){
+const n=nowMin(d);
+clearStates();
 
-      Object.entries(schedule).forEach(([key,rule])=>{
-        const el=document.getElementById(key);
-        if(!el) return;
+Object.entries(schedule).forEach(([key,rule])=>{
+const el=document.getElementById(key);
+if(!el) return;
 
-        const active=inRange(n,rule.start,rule.end);
-        const past  =isPast(n,rule.start,rule.end);
+const active=inRange(n,rule.start,rule.end);
+const past  =isPast(n,rule.start,rule.end);
 
-        if(active){
-          if(rule.type==="live"){
-            el.classList.add("live","activeGlow");
-            addBadge(el,rule.badge,true);
-          } else {
-            el.classList.add("active","activeGlow");
-            addBadge(el,rule.badge,false);
-          }
-        } else if (past && !rule.noPast){
-          el.classList.add("past");
-        }
-      });
-    }
+if(active){
+if(rule.type==="live"){
+el.classList.add("live","activeGlow");
+addBadge(el,rule.badge,true);
+} else {
+el.classList.add("active","activeGlow");
+addBadge(el,rule.badge,false);
+}
+} else if (past && !rule.noPast){
+el.classList.add("past");
+}
+});
+}
 
-    /* ---------- Clock & date ---------- */
-    function tick(){
-      const d=new Date();
-      document.getElementById("clock").textContent =
-        d.toLocaleTimeString("en-GB",{hour12:false});
-      document.getElementById("date").textContent  =
-        d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-      updateStates(d);
-    }
+/* ---------- Clock & date ---------- */
+function tick(){
+const d=new Date();
+document.getElementById("clock").textContent =
+d.toLocaleTimeString("en-GB",{hour12:false});
+document.getElementById("date").textContent  =
+d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+updateStates(d);
+}
 
-    /* ---------- Smart marquee (only if needed) ---------- */
-    function setupMarquee(rowId){
-      const row = document.getElementById(rowId);
-      if(!row) return;
+/* ---------- Smart marquee (only if needed) ---------- */
+function setupMarquee(rowId){
+const row = document.getElementById(rowId);
+if(!row) return;
 
-      const belt = row.querySelector(".belt");
-      const content = belt.querySelector(".content");
-      if(!belt || !content) return;
+const belt = row.querySelector(".belt");
+const content = belt.querySelector(".content");
+if(!belt || !content) return;
 
-      const needed = content.scrollWidth > row.clientWidth + 10;
-      if(!needed){
-        row.classList.remove("marquee");
-        const clone=belt.querySelector(".content.clone");
-        if(clone) clone.remove();
-        return;
-      }
+const needed = content.scrollWidth > row.clientWidth + 10;
+if(!needed){
+row.classList.remove("marquee");
+const clone=belt.querySelector(".content.clone");
+if(clone) clone.remove();
+return;
+}
 
-      if(!belt.querySelector(".content.clone")){
-        const clone = content.cloneNode(true);
-        clone.classList.add("clone");
-        belt.appendChild(clone);
-      }
+if(!belt.querySelector(".content.clone")){
+const clone = content.cloneNode(true);
+clone.classList.add("clone");
+belt.appendChild(clone);
+}
 
-      const px = content.scrollWidth;
-      const dur = Math.max(22, Math.min(70, px/35)); // stabil
-      row.style.setProperty('--dur', dur+'s');
-      row.classList.add("marquee");
-    }
+const px = content.scrollWidth;
+const dur = Math.max(22, Math.min(70, px/35)); // stabil
+row.style.setProperty('--dur', dur+'s');
+row.classList.add("marquee");
+}
 
-    function setupAllMarquees(){
-      setupMarquee("row1");
-      setupMarquee("row2");
-      setupMarquee("row3");
-    }
+function setupAllMarquees(){
+setupMarquee("row1");
+setupMarquee("row2");
+setupMarquee("row3");
+}
 
-    /* ---------- Weather (Antalya / Konyaaltı) ---------- */
-    const WEATHER = {
-      name: "Antalya / Konyaaltı",
-      lat: 36.863965,
-      lon: 30.630398,
-      tz: "Europe/Istanbul"
-    };
+/* ---------- Weather (Antalya / Konyaaltı) ---------- */
+const WEATHER = {
+name: "Antalya / Konyaaltı",
+lat: 36.863965,
+lon: 30.630398,
+tz: "Europe/Istanbul"
+};
 
-    function fmtTimeOnly(d){
-      return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
-    }
-    function degToCardinal(deg){
-      if (deg === null || deg === undefined || Number.isNaN(deg)) return "";
-      const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-      const idx = Math.round(((deg % 360) / 22.5)) % 16;
-      return dirs[idx];
-    }
-    function wmoToIconAndText(code, isDay=true){
-      const c = Number(code);
-      if(Number.isNaN(c)) return { icon:"🌡️", text:"Weather" };
+function fmtTimeOnly(d){
+return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+}
+function degToCardinal(deg){
+if (deg === null || deg === undefined || Number.isNaN(deg)) return "";
+const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const idx = Math.round(((deg % 360) / 22.5)) % 16;
+return dirs[idx];
+}
+function wmoToIconAndText(code, isDay=true){
+const c = Number(code);
+if(Number.isNaN(c)) return { icon:"🌡️", text:"Weather" };
 
-      if (c === 95) return { icon:"⛈️", text:"Thunderstorm" };
-      if (c === 96 || c === 99) return { icon:"⛈️", text:"Thunderstorm (hail)" };
+if (c === 95) return { icon:"⛈️", text:"Thunderstorm" };
+if (c === 96 || c === 99) return { icon:"⛈️", text:"Thunderstorm (hail)" };
 
-      if (c === 71 || c === 73 || c === 75) return { icon:"❄️", text:"Snow" };
-      if (c === 77) return { icon:"🌨️", text:"Snow grains" };
-      if (c === 85 || c === 86) return { icon:"🌨️", text:"Snow showers" };
-      if (c === 66 || c === 67) return { icon:"🌨️", text:"Freezing rain" };
+if (c === 71 || c === 73 || c === 75) return { icon:"❄️", text:"Snow" };
+if (c === 77) return { icon:"🌨️", text:"Snow grains" };
+if (c === 85 || c === 86) return { icon:"🌨️", text:"Snow showers" };
+if (c === 66 || c === 67) return { icon:"🌨️", text:"Freezing rain" };
 
-      if (c === 51 || c === 53 || c === 55) return { icon:"🌦️", text:"Drizzle" };
-      if (c === 56 || c === 57) return { icon:"🌧️", text:"Freezing drizzle" };
-      if (c === 61 || c === 63 || c === 65) return { icon:"🌧️", text:"Rain" };
-      if (c === 80 || c === 81 || c === 82) return { icon:"🌧️", text:"Rain showers" };
+if (c === 51 || c === 53 || c === 55) return { icon:"🌦️", text:"Drizzle" };
+if (c === 56 || c === 57) return { icon:"🌧️", text:"Freezing drizzle" };
+if (c === 61 || c === 63 || c === 65) return { icon:"🌧️", text:"Rain" };
+if (c === 80 || c === 81 || c === 82) return { icon:"🌧️", text:"Rain showers" };
 
-      if (c === 45 || c === 48) return { icon:"🌫️", text:"Fog" };
+if (c === 45 || c === 48) return { icon:"🌫️", text:"Fog" };
 
-      if (c === 0) return { icon: isDay ? "☀️" : "🌙", text:"Clear sky" };
-      if (c === 1) return { icon: isDay ? "🌤️" : "🌙", text:"Mostly clear" };
-      if (c === 2) return { icon:"⛅", text:"Partly cloudy" };
-      if (c === 3) return { icon:"☁️", text:"Overcast" };
+if (c === 0) return { icon: isDay ? "☀️" : "🌙", text:"Clear sky" };
+if (c === 1) return { icon: isDay ? "🌤️" : "🌙", text:"Mostly clear" };
+if (c === 2) return { icon:"⛅", text:"Partly cloudy" };
+if (c === 3) return { icon:"☁️", text:"Overcast" };
 
-      return { icon:"🌡️", text:"Weather" };
-    }
+return { icon:"🌡️", text:"Weather" };
+}
 
-    async function fetchWeather(){
-      const url =
-        "https://api.open-meteo.com/v1/forecast"
-        + "?latitude=" + encodeURIComponent(WEATHER.lat)
-        + "&longitude=" + encodeURIComponent(WEATHER.lon)
-        + "&current=" + encodeURIComponent(
-            "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,is_day"
-          )
-        + "&timezone=" + encodeURIComponent(WEATHER.tz);
+async function fetchWeather(){
+const url =
+"https://api.open-meteo.com/v1/forecast"
++ "?latitude=" + encodeURIComponent(WEATHER.lat)
++ "&longitude=" + encodeURIComponent(WEATHER.lon)
++ "&current=" + encodeURIComponent(
+"temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,is_day"
+)
++ "&timezone=" + encodeURIComponent(WEATHER.tz);
 
-      try{
-        const r = await fetch(url, { cache: "no-store" });
-        if(!r.ok) throw new Error("HTTP " + r.status);
-        const j = await r.json();
-        const c = j.current || {};
+try{
+const r = await fetch(url, { cache: "no-store" });
+if(!r.ok) throw new Error("HTTP " + r.status);
+const j = await r.json();
+const c = j.current || {};
 
-        const t = Math.round(c.temperature_2m);
-        const feels = Math.round(c.apparent_temperature);
-        const hum = Math.round(c.relative_humidity_2m);
-        const wind = Math.round(c.wind_speed_10m);
-        const wdir = degToCardinal(Number(c.wind_direction_10m));
-        const pres = Math.round(c.surface_pressure);
+const t = Math.round(c.temperature_2m);
+const feels = Math.round(c.apparent_temperature);
+const hum = Math.round(c.relative_humidity_2m);
+const wind = Math.round(c.wind_speed_10m);
+const wdir = degToCardinal(Number(c.wind_direction_10m));
+const pres = Math.round(c.surface_pressure);
 
-        const isDay = Number(c.is_day) === 1;
-        const wx = wmoToIconAndText(c.weather_code, isDay);
+const isDay = Number(c.is_day) === 1;
+const wx = wmoToIconAndText(c.weather_code, isDay);
 
-        document.getElementById("wLoc").textContent = WEATHER.name;
-        document.getElementById("wIcon").textContent = wx.icon;
-        document.getElementById("wCond").textContent = wx.text;
+document.getElementById("wLoc").textContent = WEATHER.name;
+document.getElementById("wIcon").textContent = wx.icon;
+document.getElementById("wCond").textContent = wx.text;
 
-        document.getElementById("wMain").textContent = `${t}°C`;
-        document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Humidity ${hum}%`;
-        document.getElementById("wSub2").textContent = `Wind ${wind} km/h ${wdir} • Pressure ${pres} hPa`;
-      }catch(e){
-        document.getElementById("wCond").textContent = "Weather unavailable";
-        document.getElementById("wUpd").textContent = "—";
-      }
-    }
+document.getElementById("wMain").textContent = `${t}°C`;
+document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Humidity ${hum}%`;
+document.getElementById("wSub2").textContent = `Wind ${wind} km/h ${wdir} • Pressure ${pres} hPa`;
+document.getElementById("wUpd").textContent  = `Updated ${fmtTimeOnly(new Date())}`;
+}catch(e){
+document.getElementById("wCond").textContent = "Weather unavailable";
+document.getElementById("wUpd").textContent = "—";
+}
+}
 
-    /* ================================
-       Snow engine (lightweight, no libs)
-       ================================= */
-    const snow = {
-      canvas: null,
-      ctx: null,
-      w: 0,
-      h: 0,
-      flakes: [],
-      // Ayar: burayı kurcalarsan kar yoğunluğu / hız değişir
-      density: 120,      // 80-220 arası ideal
-      wind: 0.25,        // -1 .. 1
-      speed: 0.6,        // genel hız çarpanı
-      maxR: 3.2,         // maksimum tanecik boyutu
-      minR: 0.8,         // minimum tanecik boyutu
-      drift: 0.6         // sağa sola salınım miktarı
-    };
+/* ================================
+      Snow engine (lightweight, no libs)
+      ================================= */
+const snow = {
+canvas: null,
+ctx: null,
+w: 0,
+h: 0,
+flakes: [],
+// Ayar: burayı kurcalarsan kar yoğunluğu / hız değişir
+density: 120,      // 80-220 arası ideal
+wind: 0.25,        // -1 .. 1
+speed: 0.6,        // genel hız çarpanı
+maxR: 3.2,         // maksimum tanecik boyutu
+minR: 0.8,         // minimum tanecik boyutu
+drift: 0.6         // sağa sola salınım miktarı
+};
 
-    function resizeSnow(){
-      snow.w = window.innerWidth;
-      snow.h = window.innerHeight;
-      snow.canvas.width = Math.floor(snow.w * devicePixelRatio);
-      snow.canvas.height = Math.floor(snow.h * devicePixelRatio);
-      snow.canvas.style.width = snow.w + "px";
-      snow.canvas.style.height = snow.h + "px";
-      snow.ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+function resizeSnow(){
+snow.w = window.innerWidth;
+snow.h = window.innerHeight;
+snow.canvas.width = Math.floor(snow.w * devicePixelRatio);
+snow.canvas.height = Math.floor(snow.h * devicePixelRatio);
+snow.canvas.style.width = snow.w + "px";
+snow.canvas.style.height = snow.h + "px";
+snow.ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
 
-      // yoğunluğu ekrana göre ayarla (çok küçük cihazda boğmasın)
-      const base = Math.round((snow.w * snow.h) / (1920*1080) * snow.density);
-      const target = Math.max(70, Math.min(240, base));
+// yoğunluğu ekrana göre ayarla (çok küçük cihazda boğmasın)
+const base = Math.round((snow.w * snow.h) / (1920*1080) * snow.density);
+const target = Math.max(70, Math.min(240, base));
 
-      // flake sayısını hedefe uydur
-      if (snow.flakes.length < target){
-        for(let i=snow.flakes.length; i<target; i++) snow.flakes.push(newFlake(true));
-      } else if (snow.flakes.length > target){
-        snow.flakes.length = target;
-      }
-    }
+// flake sayısını hedefe uydur
+if (snow.flakes.length < target){
+for(let i=snow.flakes.length; i<target; i++) snow.flakes.push(newFlake(true));
+} else if (snow.flakes.length > target){
+snow.flakes.length = target;
+}
+}
 
-    function rnd(min,max){ return Math.random()*(max-min)+min; }
+function rnd(min,max){ return Math.random()*(max-min)+min; }
 
-    function newFlake(randomY=false){
-      const r = rnd(snow.minR, snow.maxR);
-      return {
-        x: rnd(0, snow.w),
-        y: randomY ? rnd(0, snow.h) : rnd(-snow.h*0.2, 0),
-        r,
-        vy: rnd(0.6, 1.8) * (r/1.6) * snow.speed,
-        vx: rnd(-0.35, 0.35) + snow.wind,
-        phase: rnd(0, Math.PI*2),
-        omega: rnd(0.008, 0.02), // salınım hızı
-        alpha: rnd(0.35, 0.85)
-      };
-    }
+function newFlake(randomY=false){
+const r = rnd(snow.minR, snow.maxR);
+return {
+x: rnd(0, snow.w),
+y: randomY ? rnd(0, snow.h) : rnd(-snow.h*0.2, 0),
+r,
+vy: rnd(0.6, 1.8) * (r/1.6) * snow.speed,
+vx: rnd(-0.35, 0.35) + snow.wind,
+phase: rnd(0, Math.PI*2),
+omega: rnd(0.008, 0.02), // salınım hızı
+alpha: rnd(0.35, 0.85)
+};
+}
 
-    function stepSnow(){
-      const ctx = snow.ctx;
-      ctx.clearRect(0,0,snow.w,snow.h);
+function stepSnow(){
+const ctx = snow.ctx;
+ctx.clearRect(0,0,snow.w,snow.h);
 
-      // çok hafif "mist" etkisi (kış modu hissi) — istemezsen kapat
-      // ctx.fillStyle = "rgba(255,255,255,0.02)";
-      // ctx.fillRect(0,0,snow.w,snow.h);
+// çok hafif "mist" etkisi (kış modu hissi) — istemezsen kapat
+// ctx.fillStyle = "rgba(255,255,255,0.02)";
+// ctx.fillRect(0,0,snow.w,snow.h);
 
-      for(let i=0;i<snow.flakes.length;i++){
-        const f = snow.flakes[i];
-        f.phase += f.omega;
+for(let i=0;i<snow.flakes.length;i++){
+const f = snow.flakes[i];
+f.phase += f.omega;
 
-        // salınım
-        const sway = Math.sin(f.phase) * snow.drift;
+// salınım
+const sway = Math.sin(f.phase) * snow.drift;
 
-        f.x += f.vx + sway*0.25;
-        f.y += f.vy;
+f.x += f.vx + sway*0.25;
+f.y += f.vy;
 
-        // wrap
-        if (f.y > snow.h + 10){
-          snow.flakes[i] = newFlake(false);
-          snow.flakes[i].y = -10;
-          continue;
-        }
-        if (f.x < -20) f.x = snow.w + 20;
-        if (f.x > snow.w + 20) f.x = -20;
+// wrap
+if (f.y > snow.h + 10){
+snow.flakes[i] = newFlake(false);
+snow.flakes[i].y = -10;
+continue;
+}
+if (f.x < -20) f.x = snow.w + 20;
+if (f.x > snow.w + 20) f.x = -20;
 
-        // draw
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
-        ctx.fill();
-      }
+// draw
+ctx.beginPath();
+ctx.fillStyle = `rgba(255,255,255,${f.alpha})`;
+ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+ctx.fill();
+}
 
-      requestAnimationFrame(stepSnow);
-    }
+requestAnimationFrame(stepSnow);
+}
 
-    function initSnow(){
-      snow.canvas = document.getElementById("snowCanvas");
-      snow.ctx = snow.canvas.getContext("2d", { alpha: true });
-      resizeSnow();
-      requestAnimationFrame(stepSnow);
-    }
+function initSnow(){
+snow.canvas = document.getElementById("snowCanvas");
+snow.ctx = snow.canvas.getContext("2d", { alpha: true });
+resizeSnow();
+requestAnimationFrame(stepSnow);
+}
 
-    /* ---------- Init ---------- */
-    tick(); setupAllMarquees(); fetchWeather(); initSnow();
+/* ---------- Init ---------- */
+tick(); setupAllMarquees(); fetchWeather(); initSnow();
 
-    setInterval(tick, 1000);
-    setInterval(setupAllMarquees, 4000);
-    setInterval(fetchWeather, 10 * 60 * 1000);
+setInterval(tick, 1000);
+setInterval(setupAllMarquees, 4000);
+setInterval(fetchWeather, 10 * 60 * 1000);
 
-    window.addEventListener('resize', ()=>{
-      setupAllMarquees();
-      resizeSnow();
-    });
-  </script>
+window.addEventListener('resize', ()=>{
+setupAllMarquees();
+resizeSnow();
+});
+</script>
 </body>
 </html>
-
+~
