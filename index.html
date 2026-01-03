@@ -18,10 +18,6 @@
 
     body {
       position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
     }
 
     /* LOGO */
@@ -34,25 +30,45 @@
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.08));
       user-select: none;
       pointer-events: none;
+      z-index: 5;
     }
 
-    /* CLOCK */
+    /* CENTER WRAP (IMPORTANT FIX) */
+    .center {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      /* 2 bantın kapladığı alanı telafi eder (tarih kaybolmaz) */
+      padding-bottom: 160px;
+      box-sizing: border-box;
+
+      z-index: 3;
+      text-align: center;
+    }
+
+    /* CLOCK (auto scale) */
     #clock {
-      font-size: 110px;
+      font-size: clamp(56px, 12vw, 110px);
       font-weight: 700;
       letter-spacing: 4px;
       text-shadow:
         0 0 12px rgba(255,255,255,0.15),
         0 0 24px rgba(255,255,255,0.08);
+      line-height: 1.05;
     }
 
-    /* DATE */
+    /* DATE (auto scale) */
     #date {
-      margin-top: 20px;
-      font-size: 42px;
+      margin-top: 16px;
+      font-size: clamp(18px, 4.6vw, 42px);
       opacity: 0.85;
       letter-spacing: 1px;
       font-weight: 300;
+      line-height: 1.2;
     }
 
     /* TWO TICKERS */
@@ -65,6 +81,7 @@
       backdrop-filter: blur(6px);
       border-top: 1px solid rgba(255,255,255,0.08);
       overflow: hidden;
+      z-index: 10;
     }
 
     .tickerRow {
@@ -74,21 +91,19 @@
       padding: 14px 22px;
     }
 
-    /* separator line between two rows */
     .tickerRow.top {
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
-    /* MOVING TRACK */
     .track {
       display: inline-flex;
       align-items: center;
       gap: 18px;
       will-change: transform;
       animation: marquee linear infinite;
+      width: max-content;
     }
 
-    /* Slow premium speeds */
     .top .track { animation-duration: 70s; }
     .bottom .track { animation-duration: 80s; }
 
@@ -97,12 +112,11 @@
       to   { transform: translateX(-50%); }
     }
 
-    /* ITEMS */
     .item {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      font-size: 28px;
+      font-size: clamp(16px, 2.6vw, 28px);
       line-height: 1;
       padding: 6px 8px;
       border-radius: 10px;
@@ -116,12 +130,8 @@
       user-select: none;
     }
 
-    /* Past = slightly dim */
-    .past {
-      opacity: 0.35;
-    }
+    .past { opacity: 0.35; }
 
-    /* Active – blink + highlight */
     @keyframes pulse {
       0% { opacity: 1; }
       50% { opacity: 0.45; }
@@ -134,7 +144,6 @@
       font-weight: 700;
     }
 
-    /* BADGE */
     .badge {
       display: none;
       font-size: 16px;
@@ -146,20 +155,23 @@
       color: #ffd166;
       text-transform: uppercase;
       font-weight: 800;
+      margin-left: 8px;
     }
 
-    .active .badge {
-      display: inline-block;
-    }
+    .active .badge { display: inline-block; }
 
-    /* Mobile tweaks */
+    /* Logo also scale a bit on small screens */
     @media (max-width: 768px) {
-      #clock { font-size: 72px; }
-      #date  { font-size: 28px; }
-      .logo  { width: 150px; top: 18px; left: 18px; }
-      .item  { font-size: 20px; }
+      .logo { width: 150px; top: 18px; left: 18px; }
+      .center { padding-bottom: 150px; }
       .badge { font-size: 12px; padding: 5px 10px; }
       .tickerRow { padding: 12px 14px; }
+    }
+
+    /* EXTRA FIX for phone landscape (width büyük, height küçük) */
+    @media (max-height: 520px) {
+      .center { padding-bottom: 140px; }
+      #date { margin-top: 10px; }
     }
   </style>
 </head>
@@ -167,10 +179,11 @@
 <body>
   <img src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
-  <div id="clock"></div>
-  <div id="date"></div>
+  <div class="center">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
 
-  <!-- TWO-LINE TICKER -->
   <div class="tickerWrap">
     <div class="tickerRow top">
       <div class="track" id="trackTop"></div>
@@ -181,65 +194,38 @@
   </div>
 
   <script>
-    // ====== CONFIG ======
-    // NOTE:
-    // - meals: show "NOW OPEN" when active
-    // - animation: show "LIVE NOW" when active
-    // - allowPastDim: if false, never becomes "past" dim (Late Snack requested)
-    // - times in 24h "HH:MM"
-    // - if end is "00:00" it means 24:00 (end of day)
-    // - overnight ranges supported (e.g., 23:00–06:00)
-
     const topBand = [
-      { key:"breakfast",      icon:"🍳", label:"Breakfast",      start:"07:00", end:"10:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
-      { key:"lateBreakfast",  icon:"🥐", label:"Late Breakfast", start:"10:00", end:"10:30", badge:"NOW OPEN", type:"meal", allowPastDim:true },
-      { key:"lunch",          icon:"🍽️", label:"Lunch",          start:"12:30", end:"14:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
-      { key:"snack",          icon:"🍪", label:"Snack",          start:"14:30", end:"15:30", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      { key:"breakfast",      icon:"🍳", label:"Breakfast",      start:"07:00", end:"10:00", badge:"NOW OPEN", allowPastDim:true },
+      { key:"lateBreakfast",  icon:"🥐", label:"Late Breakfast", start:"10:00", end:"10:30", badge:"NOW OPEN", allowPastDim:true },
+      { key:"lunch",          icon:"🍽️", label:"Lunch",          start:"12:30", end:"14:00", badge:"NOW OPEN", allowPastDim:true },
+      { key:"snack",          icon:"🍪", label:"Snack",          start:"14:30", end:"15:30", badge:"NOW OPEN", allowPastDim:true },
     ];
 
     const bottomBand = [
-      { key:"dinner",     icon:"🍷", label:"Dinner",         start:"18:30", end:"21:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
-      // Animation show has only a start in your list. We'll treat it as 60 minutes (21:30–22:30).
-      { key:"show",       icon:"🎉", label:"Animation Show", start:"21:30", end:"22:30", badge:"LIVE NOW", type:"show", allowPastDim:true },
-      // Late Snack: NEVER dim, but when active it should blink + show NOW OPEN
-      { key:"lateSnack",  icon:"🌙", label:"Late Snack",     start:"23:00", end:"06:00", badge:"NOW OPEN", type:"meal", allowPastDim:false },
-      { key:"lobbyBar",   icon:"🍸", label:"Lobby Bar",      start:"08:30", end:"00:00", badge:"NOW OPEN", type:"meal", allowPastDim:true },
+      { key:"dinner",     icon:"🍷", label:"Dinner",         start:"18:30", end:"21:00", badge:"NOW OPEN", allowPastDim:true },
+      { key:"show",       icon:"🎉", label:"Animation Show", start:"21:30", end:"22:30", badge:"LIVE NOW", allowPastDim:true },
+      { key:"lateSnack",  icon:"🌙", label:"Late Snack",     start:"23:00", end:"06:00", badge:"NOW OPEN", allowPastDim:false },
+      { key:"lobbyBar",   icon:"🍸", label:"Lobby Bar",      start:"08:30", end:"00:00", badge:"NOW OPEN", allowPastDim:true },
     ];
 
-    // ====== HELPERS ======
     function toMin(hhmm) {
       const [h,m] = hhmm.split(":").map(Number);
       return (h * 60) + m;
     }
 
     function isActive(nowMin, startMin, endMin) {
-      // end 00:00 => 24:00
       if (endMin === 0) endMin = 1440;
-
-      // overnight
-      if (endMin < startMin) {
-        return (nowMin >= startMin) || (nowMin < endMin);
-      }
-      // normal
+      if (endMin < startMin) return (nowMin >= startMin) || (nowMin < endMin);
       return (nowMin >= startMin) && (nowMin < endMin);
     }
 
     function isPast(nowMin, startMin, endMin) {
-      // end 00:00 => 24:00
       if (endMin === 0) endMin = 1440;
-
-      // overnight: "past" is tricky; for our UI we only dim if we're in the "gap" between end and start
-      // Example 23:00–06:00 => past during 06:00–22:59 (gap)
-      if (endMin < startMin) {
-        return (nowMin >= endMin) && (nowMin < startMin);
-      }
-      // normal: past if now >= end
+      if (endMin < startMin) return (nowMin >= endMin) && (nowMin < startMin);
       return nowMin >= endMin;
     }
 
-    // ====== RENDER (MARQUEE SAFE) ======
     function renderBand(trackEl, items) {
-      // Build one sequence with separators
       const seq = document.createElement("div");
       seq.style.display = "inline-flex";
       seq.style.alignItems = "center";
@@ -249,16 +235,13 @@
         span.className = "item";
         span.dataset.key = it.key;
 
-        // text: icon Label HH:MM–HH:MM (or single time handled by range in config)
-        const timeText = `${it.start}–${it.end === "00:00" ? "00:00" : it.end}`;
+        const timeText = `${it.start}–${it.end}`;
         span.innerHTML = `
           <span class="txt">${it.icon} ${it.label} ${timeText}</span>
           <span class="badge">${it.badge}</span>
         `;
-
         seq.appendChild(span);
 
-        // separator
         if (idx !== items.length - 1) {
           const sep = document.createElement("span");
           sep.className = "sep";
@@ -267,51 +250,39 @@
         }
       });
 
-      // Duplicate sequence to make seamless loop (50% travel)
       const seq2 = seq.cloneNode(true);
-
       trackEl.innerHTML = "";
       trackEl.appendChild(seq);
       trackEl.appendChild(seq2);
-
-      // Ensure the track width is enough; if it's short, it still loops fine
-      trackEl.style.width = "max-content";
     }
 
-    // ====== STATE UPDATE ======
     function clearStates() {
-      document.querySelectorAll(".item").forEach(el => {
-        el.classList.remove("active", "past");
-      });
+      document.querySelectorAll(".item").forEach(el => el.classList.remove("active", "past"));
     }
 
     function applyStateFor(items, nowMin) {
       items.forEach(it => {
         const startMin = toMin(it.start);
         let endMin = toMin(it.end);
-        if (it.end === "00:00") endMin = 0; // keep 0 to let helper convert to 1440
+        if (it.end === "00:00") endMin = 0;
 
         const active = isActive(nowMin, startMin, endMin);
         const past = isPast(nowMin, startMin, endMin);
 
-        // apply to ALL clones with same data-key
         document.querySelectorAll(`.item[data-key="${it.key}"]`).forEach(el => {
           if (active) {
             el.classList.add("active");
           } else {
-            // Late Snack special: never dim
             if (it.allowPastDim && past) el.classList.add("past");
           }
         });
       });
     }
 
-    // ====== CLOCK ======
     function updateTime() {
       const now = new Date();
       const h = now.getHours();
       const m = now.getMinutes();
-      const s = now.getSeconds();
       const nowMin = (h * 60) + m;
 
       document.getElementById("clock").textContent =
@@ -330,7 +301,6 @@
       applyStateFor(bottomBand, nowMin);
     }
 
-    // ====== INIT ======
     renderBand(document.getElementById("trackTop"), topBand);
     renderBand(document.getElementById("trackBottom"), bottomBand);
 
