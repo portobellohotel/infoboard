@@ -216,32 +216,8 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .90;
   white-space: nowrap;
 }
-
-/* mevcut davranış (genel küçük ekranlar) */
 @media (max-width: 600px){
   .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
-}
-
-/* ✅ SADECE TELEFON: otomatik ölçek + taşma engeli (tablet/PC dokunulmaz) */
-@media (max-width: 480px){
-  .weather{
-    --w-scale: 1.10;           /* telefonu kurtaran asıl nokta */
-    right: 10px;
-    top: 10px;
-    max-width: calc(100vw - 20px);
-  }
-  /* telefonda satırlar taşmasın, gerektiğinde alt satıra insin */
-  .weather .sub,
-  .weather .sub2{
-    white-space: normal;
-    line-height: 1.15;
-    text-wrap: balance;
-  }
-  /* cond satırı da çok uzarsa taşmasın */
-  .weather .cond{
-    white-space: normal;
-    text-wrap: balance;
-  }
 }
 
 /* CLOCK + DATE */
