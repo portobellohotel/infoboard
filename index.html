@@ -216,6 +216,14 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .90;
   white-space: nowrap;
 }
+/* ✅ NEW: Sunrise/Sunset satırı (etiketli) */
+.weather .sub3{
+  margin-top: calc(2px * var(--w-scale));
+  font-size: calc(13px * var(--w-scale));
+  opacity: .88;
+  white-space: nowrap;
+  letter-spacing: .15px;
+}
 @media (max-width: 600px){
   .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
 }
@@ -277,9 +285,9 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 
 /* ✅✅ EN PRATİK ÇÖZÜM: Marquee YOKSA satırı ortala */
 .ticker:not(.marquee) .belt{
-  display: flex;            /* inline-flex yerine */
-  width: 100%;              /* satırı doldursun */
-  justify-content: center;  /* içerik ortada dursun */
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
 @keyframes pulse{ 0%{opacity:1} 50%{opacity:.45} 100%{opacity:1} }
@@ -338,6 +346,9 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   <div class="main" id="wMain">--°C</div>
   <div class="sub"  id="wSub">Feels like --°C • Humidity --%</div>
   <div class="sub2" id="wSub2">Wind -- km/h -- • Pressure ---- hPa</div>
+
+  <!-- ✅ NEW: sunrise / sunset -->
+  <div class="sub3" id="wSun">🌅 Sunrise --:-- • 🌇 Sunset --:--</div>
 </div>
 
 <div id="clock"></div>
@@ -632,6 +643,14 @@ function initFX(){
   setMode("none");
 }
 
+/* ---------- Helpers: Sunrise/Sunset formatting ---------- */
+function fmtTimeFromISO(iso){
+  if(!iso) return "--:--";
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return "--:--";
+  return d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", hour12:false });
+}
+
 /* ---------- Weather fetch ---------- */
 async function fetchWeather(){
   const url =
@@ -639,6 +658,8 @@ async function fetchWeather(){
     + "?latitude=" + encodeURIComponent(WEATHER.lat)
     + "&longitude=" + encodeURIComponent(WEATHER.lon)
     + "&current=" + encodeURIComponent("temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,is_day")
+    + "&daily=" + encodeURIComponent("sunrise,sunset")
+    + "&forecast_days=1"
     + "&timezone=" + encodeURIComponent(WEATHER.tz);
 
   try{
@@ -665,9 +686,21 @@ async function fetchWeather(){
     document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Wind ${wind} km/h ${wdir}`;
     document.getElementById("wSub2").textContent = `Humidity ${hum}% • Pressure ${pres} hPa`;
 
+    // ✅ Sunrise / Sunset (etiketli)
+    const sunriseISO = j?.daily?.sunrise?.[0];
+    const sunsetISO  = j?.daily?.sunset?.[0];
+    const sunrise = fmtTimeFromISO(sunriseISO);
+    const sunset  = fmtTimeFromISO(sunsetISO);
+    const sunEl = document.getElementById("wSun");
+    if(sunEl){
+      sunEl.textContent = `🌅 Sunrise ${sunrise} • 🌇 Sunset ${sunset}`;
+    }
+
     setMode(effectModeFromWMO(c.weather_code, isDay));
   }catch(e){
     document.getElementById("wCond").textContent = "Weather unavailable";
+    const sunEl = document.getElementById("wSun");
+    if(sunEl) sunEl.textContent = "🌅 Sunrise --:-- • 🌇 Sunset --:--";
     setMode("none");
   }
 }
