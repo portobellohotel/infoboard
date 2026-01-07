@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Porto Bello Hotel | Main Board</title>
+<title>Porto Bello Hotel | Info Board</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- ✅ Premium font for greeting -->
+<!-- ✅ Premium Greeting Font: Playfair Display -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -19,8 +19,8 @@
   /* ✅ EN PRATİK ÇÖZÜM: ticker iç boşluk (sol/sağ) */
   --ticker-pad: 28px;  /* 22-40 arası oyna: büyüdükçe ikonlar daha görünür */
 
-  /* ✅ Greeting font */
-  --greet-font: "Cormorant Garamond", serif;
+  /* ✅ Greeting Font */
+  --greet-font: "Playfair Display", serif;
 }
 
 html, body {
@@ -247,22 +247,22 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   justify-content: center;
 }
 
-/* ✅ Premium Greeting */
+/* ✅ Premium Greeting (Playfair + 0.02em spacing) */
 #greeting{
   font-family: var(--greet-font);
-  font-size: clamp(22px, 2.6vw, 42px);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: clamp(22px, 2.5vw, 40px);
+  font-weight: 500;
+  letter-spacing: 0.02em;   /* ✅ istediğin değer */
   opacity: .92;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   text-align: center;
-  text-shadow: 0 2px 14px rgba(0,0,0,.35), 0 0 22px rgba(0,0,0,.25);
+  text-shadow: 0 2px 14px rgba(0,0,0,.35), 0 0 22px rgba(0,0,0,.20);
   transform: translateY(0);
   transition: opacity 350ms ease, transform 350ms ease;
   user-select: none;
 }
 
-/* subtle divider line (premium touch) */
+/* ✅ Divider line (kalsın demiştin) */
 #greeting::after{
   content:"";
   display:block;
@@ -273,7 +273,7 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .18;
 }
 
-/* fade swap */
+/* soft fade swap */
 #greeting.swap{
   opacity: 0;
   transform: translateY(-6px);
@@ -402,7 +402,7 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   <div class="sub3" id="wSun">🌅 Sunrise --:-- • 🌇 Sunset --:--</div>
 </div>
 
-<!-- ✅ Greeting + Clock + Date (Premium stack) -->
+<!-- ✅ Greeting + Clock + Date -->
 <div class="centerStack">
   <div id="greeting">Welcome</div>
   <div id="clock"></div>
@@ -495,13 +495,9 @@ function updateStates(d){
 /* ---------- Premium Greeting (4 time ranges) ---------- */
 let _lastGreeting = "";
 function greetingForHour(h){
-  // 05:00–11:59
   if (h >= 5 && h < 12) return "Good morning";
-  // 12:00–17:59
   if (h >= 12 && h < 18) return "Good afternoon";
-  // 18:00–22:59
   if (h >= 18 && h < 23) return "Good evening";
-  // 23:00–04:59
   return "Good night";
 }
 function updateGreeting(d){
@@ -511,7 +507,6 @@ function updateGreeting(d){
   const next = greetingForHour(d.getHours());
   if (next === _lastGreeting) return;
 
-  // premium soft transition
   el.classList.add("swap");
   setTimeout(()=>{
     el.textContent = next;
@@ -524,10 +519,8 @@ function updateGreeting(d){
 /* ---------- Clock & date ---------- */
 function tick(){
   const d=new Date();
-
   document.getElementById("clock").textContent =
     d.toLocaleTimeString("en-GB",{hour12:false});
-
   document.getElementById("date").textContent  =
     d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 
