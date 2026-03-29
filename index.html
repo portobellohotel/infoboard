@@ -5,7 +5,6 @@
 <title>Porto Bello Hotel | Info Board</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- ✅ Premium Script Font (Allura) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
@@ -15,11 +14,7 @@
   --row-gap:10px;
   --pad-x:18px;
   --pad-y:14px;
-
-  /* ✅ EN PRATİK ÇÖZÜM: ticker iç boşluk (sol/sağ) */
-  --ticker-pad: 28px;  /* 22-40 arası oyna: büyüdükçe ikonlar daha görünür */
-
-  /* ✅ Greeting Font */
+  --ticker-pad: 28px;
   --greet-font: "Allura", cursive;
 }
 
@@ -35,7 +30,6 @@ body {
   align-items: center; justify-content: center;
 }
 
-/* ===== Weather’a göre arka plan (çok hafif) ===== */
 body.mode-sunny{
   background:
     radial-gradient(900px 520px at 85% 15%, rgba(255,215,120,.10), transparent 55%),
@@ -55,7 +49,6 @@ body.mode-snow{
     #0b1320;
 }
 
-/* ===== SUN LENS FLARE (premium, çok hafif) ===== */
 #sunFlare{
   position:absolute;
   inset:0;
@@ -145,7 +138,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   to   { transform: rotate(1.2deg) scale(1.02); }
 }
 
-/* LOGO */
 .logo {
   position: absolute;
   top: 2px; left: 2px;
@@ -155,7 +147,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   z-index: 6;
 }
 
-/* WEATHER (TOP RIGHT) */
 .weather {
   --w-scale: 1.5;
   position: absolute; top: 2px; right: 2px;
@@ -225,7 +216,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .90;
   white-space: nowrap;
 }
-/* ✅ NEW: Sunrise/Sunset satırı (etiketli) */
 .weather .sub3{
   margin-top: calc(2px * var(--w-scale));
   font-size: calc(13px * var(--w-scale));
@@ -237,7 +227,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   .weather{ --w-scale: 1.55; max-width: 92vw; right: 14px; top: 14px; }
 }
 
-/* ✅ Center Stack */
 .centerStack{
   position: relative;
   z-index: 4;
@@ -247,12 +236,11 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   justify-content: center;
 }
 
-/* ✅ Greeting (Allura) */
 #greeting{
   font-family: var(--greet-font);
   font-size: clamp(38px, 3.6vw, 64px);
   font-weight: 400;
-  letter-spacing: 0; /* ✅ Script font için en şık */
+  letter-spacing: 0;
   opacity: .92;
   margin-bottom: 8px;
   text-align: center;
@@ -265,7 +253,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: 0;
   transform: translateY(-6px);
 }
-/* ✅ Divider line kalsın */
 #greeting::after{
   content:"";
   display:block;
@@ -276,7 +263,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .18;
 }
 
-/* CLOCK + DATE */
 #clock {
   font-size: clamp(72px, 9vw, 120px);
   font-weight: 750; letter-spacing: 4px;
@@ -287,7 +273,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   opacity: .86; letter-spacing: 1px; font-weight: 300;
 }
 
-/* BOTTOM AREA (3 ROWS) */
 .bottom {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) + 4px);
@@ -302,12 +287,8 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   line-height: 1.35; font-size: clamp(16px, 2.2vw, 28px);
   white-space: nowrap;
   overflow: hidden;
-
-  /* ✅ içerik artık soldan/sağdan gömülmez */
   padding: 0 var(--ticker-pad);
   box-sizing: border-box;
-
-  /* ✅ fade/mask artık padding’e göre çalışır */
   mask-image: linear-gradient(
     90deg,
     transparent 0,
@@ -331,7 +312,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 .content { display: inline-flex; align-items: center; gap: 15px; }
 .sep { opacity: .35; }
 
-/* ✅✅ EN PRATİK ÇÖZÜM: Marquee YOKSA satırı ortala */
 .ticker:not(.marquee) .belt{
   display: flex;
   width: 100%;
@@ -355,7 +335,6 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 @keyframes marqueeShift{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
 .ticker.marquee .belt{ animation: marqueeShift var(--dur, 22s) linear infinite; }
 
-/* ===== Weather FX Canvas (snow/rain) ===== */
 #fxCanvas{
   position: absolute;
   inset: 0;
@@ -367,11 +346,26 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 .fxGlow{
   filter: drop-shadow(0 0 6px rgba(255,255,255,.12));
 }
+
+/* Slideshow */
+#slideshowOverlay{
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+#slideImage{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 </style>
 </head>
 
 <body>
-<!-- SUN FLARE LAYER -->
 <div id="sunFlare" aria-hidden="true">
   <div class="sunFlare__ray"></div>
   <div class="sunFlare__a"></div>
@@ -379,12 +373,10 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   <div class="sunFlare__c"></div>
 </div>
 
-<!-- FX overlay -->
 <canvas id="fxCanvas" class="fxGlow"></canvas>
 
 <img src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
-<!-- Weather -->
 <div class="weather" id="weatherBox">
   <div class="loc" id="wLoc">Antalya / Konyaaltı</div>
   <div class="topline">
@@ -392,14 +384,11 @@ body.mode-sunny #sunFlare{ opacity: 1; }
     <div class="cond" id="wCond">Loading…</div>
   </div>
   <div class="main" id="wMain">--°C</div>
-  <div class="sub"  id="wSub">Feels like --°C • Humidity --%</div>
+  <div class="sub" id="wSub">Feels like --°C • Humidity --%</div>
   <div class="sub2" id="wSub2">Wind -- km/h -- • Pressure ---- hPa</div>
-
-  <!-- ✅ NEW: sunrise / sunset -->
   <div class="sub3" id="wSun">🌅 Sunrise --:-- • 🌇 Sunset --:--</div>
 </div>
 
-<!-- ✅ Greeting + Clock + Date -->
 <div class="centerStack">
   <div id="greeting">Welcome</div>
   <div id="clock"></div>
@@ -438,15 +427,17 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   </div>
 </div>
 
+<div id="slideshowOverlay">
+  <img id="slideImage" src="" alt="Hotel Photo">
+</div>
+
 <script>
-/* ---------- Time helpers ---------- */
 const ids = ["breakfast","lunch","patisserie","snack","dinner","sailorsBar","show","lateSnack","lobbyBar"];
 const toMin = (h,m)=>h*60+m;
 const nowMin = d=>d.getHours()*60 + d.getMinutes();
 const inRange = (n,s,e)=> s<e ? (n>=s && n<=e) : (s>e ? (n>=s || n<=e) : n===s);
 const isPast  = (n,s,e)=> s<e ? (n>e) : ((n>e) && (n<s));
 
-/* ---------- Schedule ---------- */
 const schedule = {
   breakfast:{start:toMin(7,0),end:toMin(10,30),badge:"NOW OPEN",type:"food"},
   lunch:{start:toMin(12,30),end:toMin(14,0),badge:"NOW OPEN",type:"food"},
@@ -457,6 +448,19 @@ const schedule = {
   show:{start:toMin(21,30),end:toMin(22,30),badge:"LIVE NOW",type:"live"},
   lateSnack:{start:toMin(23,0),end:toMin(6,0),badge:"NOW OPEN",type:"food",noPast:true},
   lobbyBar:{start:toMin(8,30),end:1440,badge:"NOW OPEN",type:"food"}
+};
+
+/* Burayı sen düzenleyeceksin */
+const SLIDESHOW = {
+  boardDuration: 30000,
+  photos: [
+    { src: "images/01.jpg", duration: 2000 },
+    { src: "images/02.jpg", duration: 5000 },
+    { src: "images/03.jpg", duration: 3000 },
+    { src: "images/04.jpg", duration: 4000 },
+    { src: "images/05.jpg", duration: 2500 },
+    { src: "images/06.jpg", duration: 6000 }
+  ]
 };
 
 function clearStates(){
@@ -489,7 +493,6 @@ function updateStates(d){
   });
 }
 
-/* ---------- Greeting (4 time ranges) ---------- */
 let _lastGreeting = "";
 function greetingForHour(h){
   if (h >= 5 && h < 12) return "Good Morning";
@@ -512,7 +515,6 @@ function updateGreeting(d){
   _lastGreeting = next;
 }
 
-/* ---------- Clock & date ---------- */
 function tick(){
   const d=new Date();
   document.getElementById("clock").textContent =
@@ -523,7 +525,6 @@ function tick(){
   updateStates(d);
 }
 
-/* ---------- Smart marquee ---------- */
 function setupMarquee(rowId){
   const row = document.getElementById(rowId);
   if(!row) return;
@@ -550,7 +551,6 @@ function setupMarquee(rowId){
 }
 function setupAllMarquees(){ setupMarquee("row1"); setupMarquee("row2"); setupMarquee("row3"); }
 
-/* ---------- Weather ---------- */
 const WEATHER = { name:"Antalya / Konyaaltı", lat:36.863965, lon:30.630398, tz:"Europe/Istanbul" };
 
 function degToCardinal(deg){
@@ -592,11 +592,10 @@ function effectModeFromWMO(code, isDay){
   return "none";
 }
 
-/* ---------- FX Engine ---------- */
 const fx = {
   canvas:null, ctx:null, w:0, h:0, mode:"none", parts:[], raf:0,
-  snowDensity:120, snowWind:0.25, snowSpeed:0.6, snowMaxR:3.2, snowMinR:0.8, snowDrift:0.6,
-  rainDensity:180, rainSpeed:1.9, rainSlant:0.9
+  snowDensity:90, snowWind:0.25, snowSpeed:0.6, snowMaxR:3.2, snowMinR:0.8, snowDrift:0.6,
+  rainDensity:140, rainSpeed:1.9, rainSlant:0.9
 };
 function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
 function rnd(min,max){ return Math.random()*(max-min)+min; }
@@ -719,7 +718,6 @@ function initFX(){
   setMode("none");
 }
 
-/* ---------- Helpers: Sunrise/Sunset formatting ---------- */
 function fmtTimeFromISO(iso){
   if(!iso) return "--:--";
   const d = new Date(iso);
@@ -727,7 +725,6 @@ function fmtTimeFromISO(iso){
   return d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", hour12:false });
 }
 
-/* ---------- Weather fetch ---------- */
 async function fetchWeather(){
   const url =
     "https://api.open-meteo.com/v1/forecast"
@@ -739,41 +736,26 @@ async function fetchWeather(){
     + "&timezone=" + encodeURIComponent(WEATHER.tz);
 
   try{
-    const r = await fetch(url, { cache: "no-store" });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    const r = await fetch(url, { cache: "no-store", signal: controller.signal });
+    clearTimeout(timeout);
+
     if(!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
-    const c = j.current || {};
 
-    const t = Math.round(c.temperature_2m);
-    const feels = Math.round(c.apparent_temperature);
-    const hum = Math.round(c.relative_humidity_2m);
-    const wind = Math.round(c.wind_speed_10m);
-    const wdir = degToCardinal(Number(c.wind_direction_10m));
-    const pres = Math.round(c.surface_pressure);
-
-    const isDay = Number(c.is_day) === 1;
-    const wx = wmoToIconAndText(c.weather_code, isDay);
-
-    document.getElementById("wLoc").textContent = WEATHER.name;
-    document.getElementById("wIcon").textContent = wx.icon;
-    document.getElementById("wCond").textContent = wx.text;
-
-    document.getElementById("wMain").textContent = `${t}°C`;
-    document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Wind ${wind} km/h ${wdir}`;
-    document.getElementById("wSub2").textContent = `Humidity ${hum}% • Pressure ${pres} hPa`;
-
-    // ✅ Sunrise / Sunset (etiketli)
-    const sunriseISO = j?.daily?.sunrise?.[0];
-    const sunsetISO  = j?.daily?.sunset?.[0];
-    const sunrise = fmtTimeFromISO(sunriseISO);
-    const sunset  = fmtTimeFromISO(sunsetISO);
-    const sunEl = document.getElementById("wSun");
-    if(sunEl){
-      sunEl.textContent = `🌅 Sunrise ${sunrise} ~ 🌇 Sunset ${sunset}`;
+    localStorage.setItem("weatherCache", JSON.stringify(j));
+    renderWeather(j);
+  }catch(e){
+    const cache = localStorage.getItem("weatherCache");
+    if (cache) {
+      try {
+        renderWeather(JSON.parse(cache));
+        return;
+      } catch {}
     }
 
-    setMode(effectModeFromWMO(c.weather_code, isDay));
-  }catch(e){
     document.getElementById("wCond").textContent = "Weather unavailable";
     const sunEl = document.getElementById("wSun");
     if(sunEl) sunEl.textContent = "🌅 Sunrise --:-- • 🌇 Sunset --:--";
@@ -781,12 +763,110 @@ async function fetchWeather(){
   }
 }
 
-/* ---------- Init ---------- */
-tick(); setupAllMarquees(); initFX(); fetchWeather();
+function renderWeather(j){
+  const c = j.current || {};
+
+  const t = Math.round(c.temperature_2m);
+  const feels = Math.round(c.apparent_temperature);
+  const hum = Math.round(c.relative_humidity_2m);
+  const wind = Math.round(c.wind_speed_10m);
+  const wdir = degToCardinal(Number(c.wind_direction_10m));
+  const pres = Math.round(c.surface_pressure);
+
+  const isDay = Number(c.is_day) === 1;
+  const wx = wmoToIconAndText(c.weather_code, isDay);
+
+  document.getElementById("wLoc").textContent = WEATHER.name;
+  document.getElementById("wIcon").textContent = wx.icon;
+  document.getElementById("wCond").textContent = wx.text;
+  document.getElementById("wMain").textContent = `${t}°C`;
+  document.getElementById("wSub").textContent  = `Feels like ${feels}°C • Wind ${wind} km/h ${wdir}`;
+  document.getElementById("wSub2").textContent = `Humidity ${hum}% • Pressure ${pres} hPa`;
+
+  const sunriseISO = j?.daily?.sunrise?.[0];
+  const sunsetISO  = j?.daily?.sunset?.[0];
+  const sunrise = fmtTimeFromISO(sunriseISO);
+  const sunset  = fmtTimeFromISO(sunsetISO);
+  const sunEl = document.getElementById("wSun");
+  if(sunEl){
+    sunEl.textContent = `🌅 Sunrise ${sunrise} • 🌇 Sunset ${sunset}`;
+  }
+
+  setMode(effectModeFromWMO(c.weather_code, isDay));
+}
+
+/* Slideshow */
+let slideTimer = null;
+let cycleTimer = null;
+let currentSlideIndex = 0;
+
+function showBoard(){
+  const overlay = document.getElementById("slideshowOverlay");
+  overlay.style.display = "none";
+}
+
+function showSlide(index){
+  const overlay = document.getElementById("slideshowOverlay");
+  const img = document.getElementById("slideImage");
+  const slide = SLIDESHOW.photos[index];
+
+  if (!slide) return;
+
+  img.src = slide.src;
+  overlay.style.display = "flex";
+}
+
+function runSlideshow(){
+  if (!SLIDESHOW.photos.length) {
+    scheduleBoardPhase();
+    return;
+  }
+
+  currentSlideIndex = 0;
+
+  function nextSlide(){
+    if (currentSlideIndex >= SLIDESHOW.photos.length) {
+      showBoard();
+      scheduleBoardPhase();
+      return;
+    }
+
+    const current = SLIDESHOW.photos[currentSlideIndex];
+    showSlide(currentSlideIndex);
+    currentSlideIndex++;
+
+    slideTimer = setTimeout(nextSlide, current.duration || 2000);
+  }
+
+  nextSlide();
+}
+
+function scheduleBoardPhase(){
+  showBoard();
+  cycleTimer = setTimeout(runSlideshow, SLIDESHOW.boardDuration);
+}
+
+function startLoop(){
+  clearTimeout(slideTimer);
+  clearTimeout(cycleTimer);
+  scheduleBoardPhase();
+}
+
+tick();
+setupAllMarquees();
+initFX();
+fetchWeather();
+startLoop();
+
 setInterval(tick, 1000);
 setInterval(setupAllMarquees, 4000);
 setInterval(fetchWeather, 10 * 60 * 1000);
-window.addEventListener('resize', ()=>{ setupAllMarquees(); resizeFX(); });
+setInterval(() => location.reload(), 6 * 60 * 60 * 1000);
+
+window.addEventListener('resize', ()=>{
+  setupAllMarquees();
+  resizeFX();
+});
 </script>
 </body>
 </html>
