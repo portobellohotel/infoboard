@@ -466,12 +466,12 @@ const schedule = {
 const SLIDESHOW = {
   boardDuration: 10000,
   photos: [
-    { src: "images/1.jpg", duration: 5000 },
-    { src: "images/2.jpg", duration: 5000 },
-    { src: "images/3.jpg", duration: 5000 },
-    { src: "images/4.jpg", duration: 5000 },
-    { src: "images/5.jpg", duration: 5000 },
-    { src: "images/6.jpg", duration: 5000 }
+    { src: "images/1.jpg", duration: 5000, zoom: true },
+    { src: "images/2.jpg", duration: 5000, zoom: true },
+    { src: "images/3.jpg", duration: 5000, zoom: true },
+    { src: "images/4.jpg", duration: 5000, zoom: true },
+    { src: "images/5.jpg", duration: 5000, zoom: true },
+    { src: "images/6.jpg", duration: 5000, zoom: false }
   ]
 };
 
@@ -812,12 +812,18 @@ let slideTimer = null;
 let cycleTimer = null;
 let currentSlideIndex = 0;
 
-function restartZoom(img, duration){
+function restartZoom(img, duration, shouldZoom = true){
   img.classList.remove("zooming");
-  img.style.animationDuration = "0ms";
-  void img.offsetWidth;
-  img.style.animationDuration = duration + "ms";
-  img.classList.add("zooming");
+  img.style.animation = "none";
+
+  if (shouldZoom) {
+    img.style.transform = "scale(1.02)";
+    void img.offsetWidth;
+    img.style.animation = `cinematicZoom ${duration}ms linear forwards`;
+    img.classList.add("zooming");
+  } else {
+    img.style.transform = "scale(1)";
+  }
 }
 
 function showBoard(){
@@ -834,7 +840,7 @@ function showSlide(index){
 
   img.src = slide.src;
   overlay.style.display = "flex";
-  restartZoom(img, slide.duration || 5000);
+  restartZoom(img, slide.duration || 5000, slide.zoom !== false);
 }
 
 function runSlideshow(){
