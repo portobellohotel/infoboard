@@ -359,21 +359,33 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   overflow: hidden;
 }
 
-#slideImageA,
-#slideImageB{
+.slideLayer{
   position: absolute;
   inset: 0;
+  opacity: 0;
+  transition: opacity 1400ms ease;
+  will-change: opacity, transform;
+}
+
+.slideLayer.active{
+  opacity: 1;
+}
+
+.slideLayer img{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transition: opacity 700ms ease-in-out;
-  will-change: opacity;
+  transform: scale(1.02);
+  will-change: transform, opacity;
 }
 
-#slideImageA.active,
-#slideImageB.active{
-  opacity: 1;
+.slideLayer.active img{
+  animation: cinematicZoom 7.2s ease-out forwards;
+}
+
+@keyframes cinematicZoom{
+  from { transform: scale(1.02); }
+  to   { transform: scale(1.09); }
 }
 </style>
 </head>
@@ -441,8 +453,12 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 </div>
 
 <div id="slideshowOverlay">
-  <img id="slideImageA" src="" alt="Hotel Photo">
-  <img id="slideImageB" src="" alt="Hotel Photo">
+  <div class="slideLayer active" id="slideLayerA">
+    <img id="slideImageA" src="" alt="Hotel Photo A">
+  </div>
+  <div class="slideLayer" id="slideLayerB">
+    <img id="slideImageB" src="" alt="Hotel Photo B">
+  </div>
 </div>
 
 <script>
@@ -464,16 +480,17 @@ const schedule = {
   lobbyBar:{start:toMin(8,30),end:1440,badge:"NOW OPEN",type:"food"}
 };
 
-/* Burayı sen düzenleyeceksin */
+/* Burayı sen istersen sadece sürelerle oynarsın */
 const SLIDESHOW = {
-  boardDuration: 3000,
+  boardDuration: 10000,
+  transition: 1400,
   photos: [
-    { src: "images/1.jpg", duration: 1000 },
-    { src: "images/2.jpg", duration: 1000 },
-    { src: "images/3.jpg", duration: 1000 },
-    { src: "images/4.jpg", duration: 1000 },
-    { src: "images/5.jpg", duration: 1000 },
-    { src: "images/6.jpg", duration: 1000 }
+    { src: "images/1.jpg", duration: 5000 },
+    { src: "images/2.jpg", duration: 5000 },
+    { src: "images/3.jpg", duration: 5000 },
+    { src: "images/4.jpg", duration: 5000 },
+    { src: "images/5.jpg", duration: 5000 },
+    { src: "images/6.jpg", duration: 5000 }
   ]
 };
 
@@ -809,35 +826,55 @@ function renderWeather(j){
   setMode(effectModeFromWMO(c.weather_code, isDay));
 }
 
-/* Slideshow */
+/* Slideshow - fade + sinematik zoom */
 let slideTimer = null;
 let cycleTimer = null;
-let currentSlideIndex = 0;
-let activeSlide = "A";
+let activeLayerIndex = 0;
+
+const slideLayers = [
+  {
+    layer: document.getElementById("slideLayerA"),
+    img: document.getElementById("slideImageA")
+  },
+  {
+    layer: document.getElementById("slideLayerB"),
+    img: document.getElementById("slideImageB")
+  }
+];
+
+function clearSlideTimers(){
+  clearTimeout(slideTimer);
+  clearTimeout(cycleTimer);
+}
 
 function showBoard(){
   const overlay = document.getElementById("slideshowOverlay");
   overlay.style.display = "none";
 }
 
-function showSlide(index){
+function showSlideshow(){
   const overlay = document.getElementById("slideshowOverlay");
-  const imgA = document.getElementById("slideImageA");
-  const imgB = document.getElementById("slideImageB");
-  const slide = SLIDESHOW.photos[index];
-
-  if (!slide) return;
-
   overlay.style.display = "flex";
+}
 
-  const currentImg = activeSlide === "A" ? imgA : imgB;
-  const nextImg = activeSlide === "A" ? imgB : imgA;
+function resetLayerAnimation(img){
+  img.style.animation = "none";
+  img.offsetHeight;
+  img.style.animation = "";
+}
 
-  nextImg.src = slide.src;
-  nextImg.classList.add("active");
-  currentImg.classList.remove("active");
+function renderSlide(slide){
+  const nextLayerIndex = activeLayerIndex === 0 ? 1 : 0;
+  const active = slideLayers[activeLayerIndex];
+  const next = slideLayers[nextLayerIndex];
 
-  activeSlide = activeSlide === "A" ? "B" : "A";
+  next.img.src = slide.src;
+  resetLayerAnimation(next.img);
+
+  next.layer.classList.add("active");
+  active.layer.classList.remove("active");
+
+  activeLayerIndex = nextLayerIndex;
 }
 
 function runSlideshow(){
@@ -846,23 +883,38 @@ function runSlideshow(){
     return;
   }
 
-  currentSlideIndex = 0;
+  showSlideshow();
+
+  let index = 0;
+
+  slideLayers[0].img.src = SLIDESHOW.photos[0].src;
+  resetLayerAnimation(slideLayers[0].img);
+  slideLayers[0].layer.classList.add("active");
+  slideLayers[1].layer.classList.remove("active");
+  activeLayerIndex = 0;
 
   function nextSlide(){
-    if (currentSlideIndex >= SLIDESHOW.photos.length) {
+    index++;
+
+    if (index >= SLIDESHOW.photos.length) {
       showBoard();
       scheduleBoardPhase();
       return;
     }
 
-    const current = SLIDESHOW.photos[currentSlideIndex];
-    showSlide(currentSlideIndex);
-    currentSlideIndex++;
+    const slide = SLIDESHOW.photos[index];
+    renderSlide(slide);
 
-    slideTimer = setTimeout(nextSlide, current.duration || 3000);
+    slideTimer = setTimeout(
+      nextSlide,
+      Math.max(1200, (slide.duration || 5000))
+    );
   }
 
-  nextSlide();
+  slideTimer = setTimeout(
+    nextSlide,
+    Math.max(1200, (SLIDESHOW.photos[0].duration || 5000))
+  );
 }
 
 function scheduleBoardPhase(){
@@ -871,8 +923,7 @@ function scheduleBoardPhase(){
 }
 
 function startLoop(){
-  clearTimeout(slideTimer);
-  clearTimeout(cycleTimer);
+  clearSlideTimers();
   scheduleBoardPhase();
 }
 
