@@ -5,6 +5,10 @@
 <title>Porto Bello Hotel | Info Board</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
@@ -388,7 +392,7 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 
 <canvas id="fxCanvas" class="fxGlow"></canvas>
 
-<img src="logo.png" class="logo" alt="Porto Bello Hotel" />
+<img id="logoImage" src="logo.png" class="logo" alt="Porto Bello Hotel" />
 
 <div class="weather" id="weatherBox">
   <div class="loc" id="wLoc">Antalya / Konyaaltı</div>
@@ -445,6 +449,23 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 </div>
 
 <script>
+const ASSET_VERSION = "20260330-1";
+
+function withVersion(url){
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}v=${encodeURIComponent(ASSET_VERSION)}`;
+}
+
+function withTimestamp(url){
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}_ts=${Date.now()}`;
+}
+
+function applyAssetVersioning(){
+  const logo = document.getElementById("logoImage");
+  if (logo) logo.src = withVersion("logo.png");
+}
+
 const ids = ["breakfast","lunch","patisserie","snack","dinner","sailorsBar","show","lateSnack","lobbyBar"];
 const toMin = (h,m)=>h*60+m;
 const nowMin = d=>d.getHours()*60 + d.getMinutes();
@@ -466,12 +487,12 @@ const schedule = {
 const SLIDESHOW = {
   boardDuration: 5000,
   photos: [
-    { src: "images/1.jpg", duration: 2000, zoom: true },
-    { src: "images/2.jpg", duration: 2000, zoom: true },
-    { src: "images/3.jpg", duration: 2000, zoom: true },
-    { src: "images/4.jpg", duration: 2000, zoom: true },
-    { src: "images/5.jpg", duration: 2000, zoom: true },
-    { src: "images/6.jpg", duration: 2000, zoom: true }
+    { src: withVersion("images/1.jpg"), duration: 2000, zoom: true },
+    { src: withVersion("images/2.jpg"), duration: 2000, zoom: true },
+    { src: withVersion("images/3.jpg"), duration: 2000, zoom: true },
+    { src: withVersion("images/4.jpg"), duration: 2000, zoom: true },
+    { src: withVersion("images/5.jpg"), duration: 2000, zoom: true },
+    { src: withVersion("images/6.jpg"), duration: 2000, zoom: true }
   ]
 };
 
@@ -751,24 +772,21 @@ async function fetchWeather(){
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
 
-    const r = await fetch(url, { cache: "no-store", signal: controller.signal });
+    const r = await fetch(withTimestamp(url), {
+      cache: "no-store",
+      signal: controller.signal
+    });
+
     clearTimeout(timeout);
 
     if(!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
-
-    localStorage.setItem("weatherCache", JSON.stringify(j));
     renderWeather(j);
   }catch(e){
-    const cache = localStorage.getItem("weatherCache");
-    if (cache) {
-      try {
-        renderWeather(JSON.parse(cache));
-        return;
-      } catch {}
-    }
-
     document.getElementById("wCond").textContent = "Weather unavailable";
+    document.getElementById("wMain").textContent = "--°C";
+    document.getElementById("wSub").textContent = "Feels like --°C • Wind -- km/h --";
+    document.getElementById("wSub2").textContent = "Humidity --% • Pressure ---- hPa";
     const sunEl = document.getElementById("wSun");
     if(sunEl) sunEl.textContent = "🌅 Sunrise --:-- • 🌇 Sunset --:--";
     setMode("none");
@@ -811,6 +829,10 @@ function renderWeather(j){
 let slideTimer = null;
 let cycleTimer = null;
 let currentSlideIndex = 0;
+let tickTimer = null;
+let marqueeTimer = null;
+let weatherTimer = null;
+let hardReloadTimer = null;
 
 function restartZoom(img, duration, shouldZoom = true){
   img.classList.remove("zooming");
@@ -838,7 +860,7 @@ function showSlide(index){
 
   if (!slide) return;
 
-  img.src = slide.src;
+  img.src = withTimestamp(slide.src);
   overlay.style.display = "flex";
   restartZoom(img, slide.duration || 5000, slide.zoom !== false);
 }
@@ -879,21 +901,56 @@ function startLoop(){
   scheduleBoardPhase();
 }
 
-tick();
-setupAllMarquees();
-initFX();
-fetchWeather();
-startLoop();
+function forceHardRefresh(){
+  clearTimeout(slideTimer);
+  clearTimeout(cycleTimer);
+  clearInterval(tickTimer);
+  clearInterval(marqueeTimer);
+  clearInterval(weatherTimer);
+  clearInterval(hardReloadTimer);
 
-setInterval(tick, 1000);
-setInterval(setupAllMarquees, 4000);
-setInterval(fetchWeather, 10 * 60 * 1000);
-setInterval(() => location.reload(), 6 * 60 * 60 * 1000);
+  try {
+    stopFXLoop();
+  } catch {}
+
+  const cleanUrl = window.location.origin + window.location.pathname + "?pagev=" + Date.now();
+  window.location.replace(cleanUrl);
+}
+
+function scheduleAllTimers(){
+  tickTimer = setInterval(tick, 1000);
+  marqueeTimer = setInterval(setupAllMarquees, 4000);
+  weatherTimer = setInterval(fetchWeather, 10 * 60 * 1000);
+  hardReloadTimer = setInterval(forceHardRefresh, 30 * 60 * 1000);
+}
+
+window.addEventListener("pageshow", () => {
+  applyAssetVersioning();
+});
+
+window.addEventListener("focus", () => {
+  fetchWeather();
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    fetchWeather();
+    setupAllMarquees();
+  }
+});
 
 window.addEventListener('resize', ()=>{
   setupAllMarquees();
   resizeFX();
 });
+
+applyAssetVersioning();
+tick();
+setupAllMarquees();
+initFX();
+fetchWeather();
+startLoop();
+scheduleAllTimers();
 </script>
 </body>
 </html>
