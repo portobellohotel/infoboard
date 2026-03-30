@@ -359,28 +359,16 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   overflow: hidden;
 }
 
-.slideLayer{
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 1400ms ease;
-  will-change: opacity, transform;
-}
-
-.slideLayer.active{
-  opacity: 1;
-}
-
-.slideLayer img{
+#slideImage{
   width: 100%;
   height: 100%;
   object-fit: cover;
   transform: scale(1.02);
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
-.slideLayer.active img{
-  animation: cinematicZoom 7.2s ease-out forwards;
+#slideImage.zooming{
+  animation: cinematicZoom linear forwards;
 }
 
 @keyframes cinematicZoom{
@@ -453,12 +441,7 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 </div>
 
 <div id="slideshowOverlay">
-  <div class="slideLayer active" id="slideLayerA">
-    <img id="slideImageA" src="" alt="Hotel Photo A">
-  </div>
-  <div class="slideLayer" id="slideLayerB">
-    <img id="slideImageB" src="" alt="Hotel Photo B">
-  </div>
+  <img id="slideImage" src="" alt="Hotel Photo">
 </div>
 
 <script>
@@ -480,10 +463,8 @@ const schedule = {
   lobbyBar:{start:toMin(8,30),end:1440,badge:"NOW OPEN",type:"food"}
 };
 
-/* Burayı sen istersen sadece sürelerle oynarsın */
 const SLIDESHOW = {
   boardDuration: 10000,
-  transition: 1400,
   photos: [
     { src: "images/1.jpg", duration: 5000 },
     { src: "images/2.jpg", duration: 5000 },
@@ -826,25 +807,17 @@ function renderWeather(j){
   setMode(effectModeFromWMO(c.weather_code, isDay));
 }
 
-/* Slideshow - fade + sinematik zoom */
+/* Slideshow - sadece zoom, fade yok */
 let slideTimer = null;
 let cycleTimer = null;
-let activeLayerIndex = 0;
+let currentSlideIndex = 0;
 
-const slideLayers = [
-  {
-    layer: document.getElementById("slideLayerA"),
-    img: document.getElementById("slideImageA")
-  },
-  {
-    layer: document.getElementById("slideLayerB"),
-    img: document.getElementById("slideImageB")
-  }
-];
-
-function clearSlideTimers(){
-  clearTimeout(slideTimer);
-  clearTimeout(cycleTimer);
+function restartZoom(img, duration){
+  img.classList.remove("zooming");
+  img.style.animationDuration = "0ms";
+  void img.offsetWidth;
+  img.style.animationDuration = duration + "ms";
+  img.classList.add("zooming");
 }
 
 function showBoard(){
@@ -852,29 +825,16 @@ function showBoard(){
   overlay.style.display = "none";
 }
 
-function showSlideshow(){
+function showSlide(index){
   const overlay = document.getElementById("slideshowOverlay");
+  const img = document.getElementById("slideImage");
+  const slide = SLIDESHOW.photos[index];
+
+  if (!slide) return;
+
+  img.src = slide.src;
   overlay.style.display = "flex";
-}
-
-function resetLayerAnimation(img){
-  img.style.animation = "none";
-  img.offsetHeight;
-  img.style.animation = "";
-}
-
-function renderSlide(slide){
-  const nextLayerIndex = activeLayerIndex === 0 ? 1 : 0;
-  const active = slideLayers[activeLayerIndex];
-  const next = slideLayers[nextLayerIndex];
-
-  next.img.src = slide.src;
-  resetLayerAnimation(next.img);
-
-  next.layer.classList.add("active");
-  active.layer.classList.remove("active");
-
-  activeLayerIndex = nextLayerIndex;
+  restartZoom(img, slide.duration || 5000);
 }
 
 function runSlideshow(){
@@ -883,38 +843,23 @@ function runSlideshow(){
     return;
   }
 
-  showSlideshow();
-
-  let index = 0;
-
-  slideLayers[0].img.src = SLIDESHOW.photos[0].src;
-  resetLayerAnimation(slideLayers[0].img);
-  slideLayers[0].layer.classList.add("active");
-  slideLayers[1].layer.classList.remove("active");
-  activeLayerIndex = 0;
+  currentSlideIndex = 0;
 
   function nextSlide(){
-    index++;
-
-    if (index >= SLIDESHOW.photos.length) {
+    if (currentSlideIndex >= SLIDESHOW.photos.length) {
       showBoard();
       scheduleBoardPhase();
       return;
     }
 
-    const slide = SLIDESHOW.photos[index];
-    renderSlide(slide);
+    const current = SLIDESHOW.photos[currentSlideIndex];
+    showSlide(currentSlideIndex);
+    currentSlideIndex++;
 
-    slideTimer = setTimeout(
-      nextSlide,
-      Math.max(1200, (slide.duration || 5000))
-    );
+    slideTimer = setTimeout(nextSlide, current.duration || 5000);
   }
 
-  slideTimer = setTimeout(
-    nextSlide,
-    Math.max(1200, (SLIDESHOW.photos[0].duration || 5000))
-  );
+  nextSlide();
 }
 
 function scheduleBoardPhase(){
@@ -923,7 +868,8 @@ function scheduleBoardPhase(){
 }
 
 function startLoop(){
-  clearSlideTimers();
+  clearTimeout(slideTimer);
+  clearTimeout(cycleTimer);
   scheduleBoardPhase();
 }
 
