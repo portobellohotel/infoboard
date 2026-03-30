@@ -359,21 +359,21 @@ body.mode-sunny #sunFlare{ opacity: 1; }
   overflow: hidden;
 }
 
-#slideImage{
+#slideImageA,
+#slideImageB{
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transform: scale(1.05);
-  transition:
-    opacity 1200ms ease,
-    transform 7000ms ease;
-  will-change: opacity, transform;
+  transition: opacity 700ms ease-in-out;
+  will-change: opacity;
 }
 
-#slideImage.active{
+#slideImageA.active,
+#slideImageB.active{
   opacity: 1;
-  transform: scale(1.12);
 }
 </style>
 </head>
@@ -441,7 +441,8 @@ body.mode-sunny #sunFlare{ opacity: 1; }
 </div>
 
 <div id="slideshowOverlay">
-  <img id="slideImage" src="" alt="Hotel Photo">
+  <img id="slideImageA" src="" alt="Hotel Photo">
+  <img id="slideImageB" src="" alt="Hotel Photo">
 </div>
 
 <script>
@@ -467,12 +468,12 @@ const schedule = {
 const SLIDESHOW = {
   boardDuration: 10000,
   photos: [
-    { src: "images/1.jpg", duration: 4000 },
-    { src: "images/2.jpg", duration: 4000 },
-    { src: "images/3.jpg", duration: 4000 },
-    { src: "images/4.jpg", duration: 4000 },
-    { src: "images/5.jpg", duration: 4000 },
-    { src: "images/6.jpg", duration: 4000 }
+    { src: "images/1.jpg", duration: 3000 },
+    { src: "images/2.jpg", duration: 3000 },
+    { src: "images/3.jpg", duration: 3000 },
+    { src: "images/4.jpg", duration: 3000 },
+    { src: "images/5.jpg", duration: 3000 },
+    { src: "images/6.jpg", duration: 3000 }
   ]
 };
 
@@ -812,39 +813,31 @@ function renderWeather(j){
 let slideTimer = null;
 let cycleTimer = null;
 let currentSlideIndex = 0;
-let slideTransitionTimer = null;
+let activeSlide = "A";
 
 function showBoard(){
   const overlay = document.getElementById("slideshowOverlay");
-  const img = document.getElementById("slideImage");
-
-  clearTimeout(slideTransitionTimer);
-  img.classList.remove("active");
   overlay.style.display = "none";
 }
 
 function showSlide(index){
   const overlay = document.getElementById("slideshowOverlay");
-  const img = document.getElementById("slideImage");
+  const imgA = document.getElementById("slideImageA");
+  const imgB = document.getElementById("slideImageB");
   const slide = SLIDESHOW.photos[index];
 
   if (!slide) return;
 
   overlay.style.display = "flex";
 
-  img.classList.remove("active");
+  const currentImg = activeSlide === "A" ? imgA : imgB;
+  const nextImg = activeSlide === "A" ? imgB : imgA;
 
-  clearTimeout(slideTransitionTimer);
-  slideTransitionTimer = setTimeout(() => {
-    img.src = slide.src;
-    img.style.transform = "scale(1.05)";
+  nextImg.src = slide.src;
+  nextImg.classList.add("active");
+  currentImg.classList.remove("active");
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        img.classList.add("active");
-      });
-    });
-  }, 350);
+  activeSlide = activeSlide === "A" ? "B" : "A";
 }
 
 function runSlideshow(){
@@ -866,7 +859,7 @@ function runSlideshow(){
     showSlide(currentSlideIndex);
     currentSlideIndex++;
 
-    slideTimer = setTimeout(nextSlide, current.duration || 4000);
+    slideTimer = setTimeout(nextSlide, current.duration || 3000);
   }
 
   nextSlide();
@@ -880,7 +873,6 @@ function scheduleBoardPhase(){
 function startLoop(){
   clearTimeout(slideTimer);
   clearTimeout(cycleTimer);
-  clearTimeout(slideTransitionTimer);
   scheduleBoardPhase();
 }
 
