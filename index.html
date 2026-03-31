@@ -826,6 +826,8 @@ function renderWeather(j){
 let slideTimer = null;
 let cycleTimer = null;
 let currentSlideIndex = 0;
+let completedCycles = 0;
+const REFRESH_AFTER_CYCLES = 5;
 
 function restartZoom(img, duration, shouldZoom = true){
   img.classList.remove("zooming");
@@ -860,6 +862,11 @@ function showSlide(index){
 
 function runSlideshow(){
   if (!SLIDESHOW.photos.length) {
+    completedCycles++;
+    if (completedCycles >= REFRESH_AFTER_CYCLES) {
+      refreshWithTimestamp();
+      return;
+    }
     scheduleBoardPhase();
     return;
   }
@@ -868,6 +875,13 @@ function runSlideshow(){
 
   function nextSlide(){
     if (currentSlideIndex >= SLIDESHOW.photos.length) {
+      completedCycles++;
+
+      if (completedCycles >= REFRESH_AFTER_CYCLES) {
+        refreshWithTimestamp();
+        return;
+      }
+
       showBoard();
       scheduleBoardPhase();
       return;
@@ -891,7 +905,9 @@ function scheduleBoardPhase(){
 function startLoop(){
   clearTimeout(slideTimer);
   clearTimeout(cycleTimer);
-  scheduleBoardPhase();
+  completedCycles = 0;
+  showBoard();
+  cycleTimer = setTimeout(runSlideshow, SLIDESHOW.boardDuration);
 }
 
 function refreshWithTimestamp(){
@@ -913,9 +929,6 @@ startLoop();
 setInterval(tick, 1000);
 setInterval(setupAllMarquees, 4000);
 setInterval(fetchWeather, 10 * 60 * 1000);
-
-// 1 dakikalık test cache-busting refresh
-setInterval(refreshWithTimestamp, 30000);
 
 window.addEventListener('resize', ()=>{
   setupAllMarquees();
