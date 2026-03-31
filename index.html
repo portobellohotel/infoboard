@@ -479,14 +479,14 @@ const schedule = {
 };
 
 const SLIDESHOW = {
-  boardDuration: 5000,
+  boardDuration: 1000,
   photos: [
-    { src: "images/1.jpg", duration: 5000, zoom: true },
-    { src: "images/2.jpg", duration: 5000, zoom: true },
-    { src: "images/3.jpg", duration: 5000, zoom: true },
-    { src: "images/4.jpg", duration: 5000, zoom: true },
-    { src: "images/5.jpg", duration: 5000, zoom: true },
-    { src: "images/6.jpg", duration: 5000, zoom: true }
+    { src: "images/1.jpg", duration: 1000, zoom: true },
+    { src: "images/2.jpg", duration: 1000, zoom: true },
+    { src: "images/3.jpg", duration: 1000, zoom: true },
+    { src: "images/4.jpg", duration: 1000, zoom: true },
+    { src: "images/5.jpg", duration: 1000, zoom: true },
+    { src: "images/6.jpg", duration: 1000, zoom: true }
   ]
 };
 
@@ -915,7 +915,7 @@ setInterval(setupAllMarquees, 4000);
 setInterval(fetchWeather, 10 * 60 * 1000);
 
 // 1 dakikalık test cache-busting refresh
-setInterval(refreshWithTimestamp, 60000);
+setInterval(refreshWithTimestamp, 600000);
 
 window.addEventListener('resize', ()=>{
   setupAllMarquees();
