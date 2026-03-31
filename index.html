@@ -9,6 +9,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 
+<script>
+(function () {
+  try {
+    const url = new URL(window.location.href);
+
+    if (!url.searchParams.has("_ts")) {
+      url.searchParams.set("_ts", Date.now());
+      window.location.replace(url.toString());
+    }
+  } catch (e) {
+    console.log("Initial cache-busting redirect error:", e);
+  }
+})();
+</script>
+
 <style>
 :root{
   --row-gap:10px;
@@ -879,6 +894,16 @@ function startLoop(){
   scheduleBoardPhase();
 }
 
+function refreshWithTimestamp(){
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("_ts", Date.now());
+    window.location.replace(url.toString());
+  } catch (e) {
+    console.log("Cache refresh error:", e);
+  }
+}
+
 tick();
 setupAllMarquees();
 initFX();
@@ -890,15 +915,7 @@ setInterval(setupAllMarquees, 4000);
 setInterval(fetchWeather, 10 * 60 * 1000);
 
 // 1 dakikalık test cache-busting refresh
-setInterval(() => {
-  try {
-    const url = new URL(window.location.href);
-    url.searchParams.set("_ts", Date.now());
-    window.location.href = url.toString();
-  } catch (e) {
-    console.log("Cache refresh error:", e);
-  }
-}, 60000);
+setInterval(refreshWithTimestamp, 60000);
 
 window.addEventListener('resize', ()=>{
   setupAllMarquees();
