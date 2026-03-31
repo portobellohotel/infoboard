@@ -888,7 +888,17 @@ startLoop();
 setInterval(tick, 1000);
 setInterval(setupAllMarquees, 4000);
 setInterval(fetchWeather, 10 * 60 * 1000);
-setInterval(() => location.reload(), 6 * 60 * 60 * 1000);
+
+// 1 dakikalık test cache-busting refresh
+setInterval(() => {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set("_ts", Date.now());
+    window.location.href = url.toString();
+  } catch (e) {
+    console.log("Cache refresh error:", e);
+  }
+}, 60000);
 
 window.addEventListener('resize', ()=>{
   setupAllMarquees();
